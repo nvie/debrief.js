@@ -3,7 +3,7 @@
 import debrief from '../index';
 
 describe('debrief', () => {
-    it('foo', () => {
+    it('trivial test for now', () => {
         expect(debrief('foo')).toEqual('"foo"');
     });
 });
