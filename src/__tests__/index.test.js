@@ -39,34 +39,69 @@ function assert(serializedValue: string, expected: string) {
 }
 
 describe('debrief', () => {
-    it('serializes primitives', () => {
+    it('serializes normal JS values', () => {
+        expect(serialize(1234)).toEqual('1234');
+        expect(serialize(true)).toEqual('true');
         expect(serialize('foo')).toEqual('"foo"');
-        expect(annotate('foo', 'This is a foo')).toEqual({ annotation: 'This is a foo', value: 'foo' });
+        expect(serialize(['foo', 123])).toEqual('[\n  "foo",\n  123,\n]');
+    });
 
-        const test = [annotate(1234, 'ABC'), true];
+    it('serializes annotated primitives', () => {
+        assert(
+            serialize(annotate(123, 'a number')),
+            `
+              123
+              ^^^ a number
+            `
+        );
+        assert(
+            serialize(annotate(true, 'not false')),
+            `
+              true
+              ^^^^ not false
+            `
+        );
+        assert(
+            serialize(annotate('foo', 'This is a foo')),
+            `
+              "foo"
+              ^^^^^ This is a foo
+            `
+        );
+    });
+
+    it('serializes data inside arrays', () => {
+        const test = [[annotate(1234, 'ABC')], annotate(true, 'not false')];
         assert(
             serialize(test),
             `
               [
-                1234,
-                ^^^^ ABC
+                [
+                  1234,
+                  ^^^^ ABC
+                ],
                 true,
+                ^^^^ not false
               ]
             `
         );
+    });
 
+    it('serializes data inside objects', () => {
         // const test2 = annotateField({ name: 1234 }, 'name', 'The name should be a string');
         // should produce:
-        // const test2 = annotate({ name: annotate(1234, 'The name should be a string')});
-        // assert(
-        //     serialize(test2),
-        //     `
-        //       {
-        //         name: 1234,
-        //               ^^^^ The name should be a string
-        //       }
-        //     `
-        // );
+        const test2 = { name: annotate(123, 'The name should be a string') };
+
+        // THIS YET FAILS BECAUSE THE "name: " prefix isn't added!
+        assert(
+            serialize(test2),
+            `
+              {
+                name: 123,
+                      ^^^ The name should be a string
+              }
+            `
+        );
 
         // const structure = [{ name: 'Peter' }, { name: 'John', email: 123 }];
         // const test2 = annotateKeyPath(structure, [1, 'email', 'Must be string']);

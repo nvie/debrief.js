@@ -93,7 +93,7 @@ function serializeObject(o: { [key: string]: mixed }, prefix: string) {
 // $FlowFixMe
 export function serialize(o: any, prefix: string = '') {
     if (o && o.annotation && o.value) {
-        return o.serialize();
+        return o.toString();
     } else if (typeof o === 'string') {
         return serializeString(o);
     } else if (typeof o === 'number' || typeof o === 'boolean') {
