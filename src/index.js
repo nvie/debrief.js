@@ -1,7 +1,5 @@
 // @flow
 
-import chalk from 'chalk';
-
 class Annotation<T> {
     value: T;
     annotation: string;
@@ -19,7 +17,6 @@ class Annotation<T> {
         const serialized = this.serialize('');
         const lines = serialized.split('\n');
         return `${'^'.repeat(lines.length > 1 ? 1 : serialized.length)} ${this.annotation}`;
-        // return chalk.red(`${'^'.repeat(lines.length > 1 ? 1 : serialized.length)} ${this.annotation}`);
     }
 
     toString() {
@@ -58,7 +55,6 @@ function* iterArray(arr: Array<mixed>, prefix: string) {
     for (const item of arr) {
         if (item instanceof Annotation) {
             const ser = item.serialize(prefix + '  ');
-            // const ser = chalk.red(item.serialize(prefix + '  '));
             const ann = item.annotate();
             yield prefix + '  ' + ser + ',';
             yield prefix + '  ' + ann;
@@ -79,7 +75,7 @@ function* iterObject(o: { [key: string]: mixed }, prefix: string) {
     for (const key of keys) {
         const val = o[key];
         if (val instanceof Annotation) {
-            const ser = chalk.red(val.serialize(prefix + '  '));
+            const ser = val.serialize(prefix + '  ');
             const ann = val.annotate();
             yield prefix + '  ' + key + ': ' + ser + ',';
             yield prefix + '  ' + ann;
