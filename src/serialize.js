@@ -1,35 +1,6 @@
 // @flow
 
-class Annotation<T> {
-    value: T;
-    annotation: string;
-
-    constructor(value: T, annotation: string) {
-        this.value = value;
-        this.annotation = annotation;
-    }
-
-    serialize(prefix: string) {
-        return serialize(this.value, prefix);
-    }
-
-    annotate() {
-        const serialized = this.serialize('');
-        const lines = serialized.split('\n');
-        return `${'^'.repeat(lines.length > 1 ? 1 : serialized.length)} ${this.annotation}`;
-    }
-
-    toString() {
-        const { value, annotation } = this;
-        const serialized = serialize(value);
-        const len = serialized.length;
-        return `${serialized}\n${'^'.repeat(len)} ${annotation}`;
-    }
-}
-
-export function annotate<T>(o: T, msg: string): Annotation<T> {
-    return new Annotation(o, msg);
-}
+// import type { Annotation } from './ast';
 
 function serializeString(s: string, width: number = 80) {
     // Full string
@@ -53,14 +24,14 @@ function* iterArray(arr: Array<mixed>, prefix: string) {
 
     yield '[';
     for (const item of arr) {
-        if (item instanceof Annotation) {
-            const ser = item.serialize(prefix + '  ');
-            const ann = item.annotate();
-            yield prefix + '  ' + ser + ',';
-            yield prefix + '  ' + ann;
-        } else {
-            yield prefix + '  ' + serialize(item, prefix + '  ') + ',';
-        }
+        // if (item instanceof Annotation) {
+        //     const ser = item.serialize(prefix + '  ');
+        //     const ann = item.annotate();
+        //     yield prefix + '  ' + ser + ',';
+        //     yield prefix + '  ' + ann;
+        // } else {
+        yield prefix + '  ' + serialize(item, prefix + '  ') + ',';
+        // }
     }
     yield prefix + ']';
 }
@@ -74,14 +45,14 @@ function* iterObject(o: { [key: string]: mixed }, prefix: string) {
     yield '{';
     for (const key of keys) {
         const val = o[key];
-        if (val instanceof Annotation) {
-            const ser = val.serialize(prefix + '  ');
-            const ann = val.annotate();
-            yield prefix + '  ' + key + ': ' + ser + ',';
-            yield prefix + '  ' + ann;
-        } else {
-            yield prefix + '  ' + key + ': ' + serialize(val, prefix + '  ') + ',';
-        }
+        // if (val instanceof Annotation) {
+        //     const ser = val.serialize(prefix + '  ');
+        //     const ann = val.annotate();
+        //     yield prefix + '  ' + key + ': ' + ser + ',';
+        //     yield prefix + '  ' + ann;
+        // } else {
+        yield prefix + '  ' + key + ': ' + serialize(val, prefix + '  ') + ',';
+        // }
     }
     yield prefix + '}';
 }
@@ -91,7 +62,7 @@ function serializeObject(o: { [key: string]: mixed }, prefix: string) {
 }
 
 // $FlowFixMe
-export function serialize(o: any, prefix: string = '') {
+export default function serialize(o: any, prefix: string = '') {
     if (o && o.annotation && o.value) {
         return o.toString();
     } else if (typeof o === 'string') {
