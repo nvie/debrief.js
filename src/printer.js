@@ -19,7 +19,6 @@ function serializeString(s: deliberatelyAny, width: number = 80) {
     return ser;
 }
 
-// $FlowFixMe
 function* iterArray(arr: Array<Annotation<mixed>>, prefix: string) {
     if (arr.length === 0) {
         yield '[]';
