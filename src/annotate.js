@@ -36,7 +36,11 @@ export default function annotate<T>(value: deliberatelyAny, annotation: Maybe<st
         hasAnnotation = any(value, ann => ann.hasAnnotation);
         return { type: 'array', value, hasAnnotation, annotation };
     } else if (isAnnotation(value)) {
-        return value;
+        if (annotation !== undefined) {
+            return { ...value, annotation, hasAnnotation };
+        } else {
+            return value;
+        }
     } else if (typeof value === 'object') {
         return annotatePairs(Object.entries(value));
     }

@@ -162,5 +162,9 @@ describe('parsing is idempotent', () => {
         expect(annotate(value)).toEqual(expected);
         expect(annotate(annotate(value))).toEqual(expected);
         expect(annotate(annotate(annotate(annotate(annotate(value)))))).toEqual(expected);
+
+        // But providing a new value will update the existing annotation!
+        expect(annotate(annotate(value), 'foo').annotation).toEqual('foo');
+        expect(annotate(annotate(annotate(value), 'foo'), 'bar').annotation).toEqual('bar');
     });
 });
