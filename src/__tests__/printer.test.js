@@ -2,7 +2,6 @@
 
 import annotate from '../parser';
 import serialize from '../printer';
-
 import { dedent } from './helpers';
 
 function debrief(input, expected) {
