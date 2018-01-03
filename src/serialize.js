@@ -1,7 +1,6 @@
 // @flow
 
-import { isAnnotation } from './ast';
-import type { Annotation } from './ast';
+import type { Annotation, Maybe } from './ast';
 
 type deliberatelyAny = $FlowFixMe;
 
@@ -27,90 +26,94 @@ function* iterArray(arr: Array<Annotation<mixed>>, prefix: string) {
 
     yield '[';
     for (const item of arr) {
-        if (isAnnotation(item)) {
-            const ser = serializeAnnotation({ ...item, annotation: undefined }, prefix + '  ');
-            yield prefix + '  ' + ser + ',';
-            const annotation = item.annotation;
-            if (annotation) {
-                const linecount = ser.split('\n').length;
-                const sep = '^'.repeat(linecount > 1 ? 1 : ser.length);
-                yield prefix + '  ' + sep + ' ' + annotation;
-            }
-        } else {
-            yield prefix + '  ' + serializeAnnotation(item, prefix + '  ') + ',';
+        const [ser, ann] = serializeAnnotation(item, prefix + '  ');
+        yield prefix + '  ' + ser + ',';
+        if (ann !== undefined) {
+            yield prefix + '  ' + ann;
         }
     }
     yield prefix + ']';
 }
 
-function serializeArray(ann: Annotation<*>, prefix: string) {
+function serializeArray(value: Array<Annotation<mixed>>, hasAnnotations: boolean, prefix: string) {
     // TODO: Inspect 'hasAnnotations' and decide whether to inline or expand serialize
-    return [...iterArray(ann.value, prefix)].join('\n');
+    return [...iterArray(value, prefix)].join('\n');
 }
 
-// $FlowFixMe
-function* iterObject(pairs: Array<{ key: Annotation<string>, value: Annotation<mixed> }>, prefix: string) {
+function* iterObject(pairs: Array<{ key: Annotation<mixed>, value: Annotation<mixed> }>, prefix: string) {
     yield '{';
     for (const pair of pairs) {
-        const key: Annotation<string> = pair.key;
-        const value: Annotation<*> = pair.value;
-        if (isAnnotation(value)) {
-            const kser = serializeAnnotation({ ...key, annotation: undefined });
-            const vser = serializeAnnotation({ ...value, annotation: undefined });
+        const key: Annotation<mixed> = pair.key;
+        const value: Annotation<mixed> = pair.value;
+        const [kser /* , kann */] = serializeAnnotation(key);
+        const [vser, vann] = serializeAnnotation(value);
 
-            yield prefix + '  ' + kser + ': ' + vser + ',';
-
-            const annotation = value.annotation;
-            if (annotation) {
-                const linecount = vser.split('\n').length;
-                const sep = '^'.repeat(linecount > 1 ? 1 : vser.length);
-                yield prefix + '  ' + ' '.repeat(kser.length + 2) + sep + ' ' + annotation;
-            }
-        } else {
-            yield prefix +
-                '  ' +
-                serializeAnnotation({ ...key, annotation: undefined }) +
-                ': ' +
-                serializeAnnotation(value, prefix + '  ') +
-                ',';
+        yield prefix + '  ' + kser + ': ' + vser + ',';
+        if (vann !== undefined) {
+            yield prefix + '  ' + ' '.repeat(kser.length + 2) + vann;
         }
     }
     yield prefix + '}';
 }
 
-function serializeObject(ann: Annotation<{ [key: string]: mixed }>, prefix: string) {
+function serializeObject(
+    value: Array<{ key: Annotation<mixed>, value: Annotation<mixed> }>,
+    hasAnnotations: boolean,
+    prefix: string
+) {
     // TODO: Inspect 'hasAnnotations' and decide whether to inline or expand serialize
-    return [...iterObject(ann.value, prefix)].join('\n');
+    return [...iterObject(value, prefix)].join('\n');
 }
 
-export function serializeAnnotation(ann: deliberatelyAny, prefix: string = ''): string {
-    if (ann.type === 'string') {
-        return serializeString(ann.value);
-    } else if (ann.type === 'number' || ann.type === 'boolean') {
-        return JSON.stringify(ann.value);
-    } else if (ann.type === 'null') {
+export function serializeValue(value: deliberatelyAny): string {
+    if (typeof value === 'string') {
+        return serializeString(value);
+    } else if (typeof value === 'number' || typeof value === 'boolean') {
+        return JSON.stringify(value);
+    } else if (value === null) {
         return 'null';
-    } else if (ann.type === 'undefined') {
+    } else if (value === undefined) {
         return 'undefined';
-    } else if (ann.type === 'date') {
-        return `Date(${JSON.stringify(ann.value.toString())})`;
-    } else if (ann.type === 'array') {
-        return serializeArray(ann, prefix);
-    } else if (ann.type === 'object') {
-        return serializeObject(ann, prefix);
+    } else if (typeof value.getMonth === 'function') {
+        return `Date(${JSON.stringify(value.toString())})`;
     }
 
     return '(unserializable)';
 }
 
-export default function serialize(ann: Annotation<*>): string {
-    const serialized = serializeAnnotation(ann);
+export function serializeAnnotation(ann: Annotation<mixed>, prefix: string = ''): [string, Maybe<string>] {
+    let serialized;
+    if (ann.type === 'array') {
+        serialized = serializeArray(
+            ((ann.value: deliberatelyAny): Array<Annotation<mixed>>),
+            ann.hasAnnotation,
+            prefix
+        );
+    } else if (ann.type === 'object') {
+        serialized = serializeObject(
+            ((ann.value: deliberatelyAny): Array<{ key: Annotation<mixed>, value: Annotation<mixed> }>),
+            ann.hasAnnotation,
+            prefix
+        );
+    } else {
+        serialized = serializeValue(ann.value);
+    }
+
     const annotation = ann.annotation;
     if (annotation !== undefined) {
         const linecount = serialized.split('\n').length;
         const sep = '^'.repeat(linecount > 1 ? 1 : serialized.length);
-        return `${serialized}\n${sep} ${annotation}`;
+        return [serialized, `${sep} ${annotation}`];
     } else {
-        return serialized;
+        return [serialized, undefined];
+    }
+}
+
+export default function serialize(ann: Annotation<*>): string {
+    const [serialized, annotation] = serializeAnnotation(ann);
+    if (annotation !== undefined) {
+        return `${serialized}\n${annotation}`;
+    } else {
+        return `${serialized}`;
     }
 }
