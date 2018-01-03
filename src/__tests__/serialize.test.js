@@ -1,7 +1,7 @@
 // @flow
 
-import annotate from '../parser';
-import serialize from '../printer';
+import annotate from '../annotate';
+import serialize from '../serialize';
 import { dedent } from './helpers';
 
 function debrief(input, expected) {

@@ -1,6 +1,6 @@
 // @flow
 
-import annotate, { annotatePairs } from '../parser';
+import annotate, { annotatePairs } from '../annotate';
 
 describe('parsing (scalars)', () => {
     it('strings', () => {
