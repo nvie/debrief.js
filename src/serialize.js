@@ -46,11 +46,13 @@ function* iterObject(pairs: Array<{ key: Annotation<mixed>, value: Annotation<mi
         const key: Annotation<mixed> = pair.key;
         const value: Annotation<mixed> = pair.value;
         const [kser /* , kann */] = serializeAnnotation(key);
-        const [vser, vann] = serializeAnnotation(value);
+
+        const valPrefix = prefix + '  ' + ' '.repeat(kser.length + 2);
+        const [vser, vann] = serializeAnnotation(value, valPrefix);
 
         yield prefix + '  ' + kser + ': ' + vser + ',';
         if (vann !== undefined) {
-            yield prefix + '  ' + ' '.repeat(kser.length + 2) + vann;
+            yield valPrefix + vann;
         }
     }
     yield prefix + '}';
@@ -75,7 +77,7 @@ export function serializeValue(value: deliberatelyAny): string {
     } else if (value === undefined) {
         return 'undefined';
     } else if (typeof value.getMonth === 'function') {
-        return `Date(${JSON.stringify(value.toString())})`;
+        return `new Date(${JSON.stringify(value.toString())})`;
     }
 
     return '(unserializable)';
