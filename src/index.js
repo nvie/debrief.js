@@ -1,9 +1,9 @@
 // @flow
 
-import annotate, { annotateField, annotatePairs } from './annotate';
+import annotate, { annotateField, annotateFields, annotatePairs } from './annotate';
 import { isAnnotation } from './ast';
 import type { Annotation } from './ast';
 import serialize from './serialize';
 
 export type { Annotation };
-export { annotate, annotateField, annotatePairs, isAnnotation, serialize };
+export { annotate, annotateField, annotateFields, annotatePairs, isAnnotation, serialize };

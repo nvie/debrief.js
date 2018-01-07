@@ -7,6 +7,17 @@ import type { Annotation, Maybe } from './ast';
 
 type deliberatelyAny = $FlowFixMe;
 
+export function annotateFields(
+    object: { [string]: mixed },
+    fields: Array<[/* key */ string, Annotation<mixed>]>
+): Annotation<mixed> {
+    let pairs = Object.entries(object);
+    for (const [field, ann] of fields) {
+        pairs = pairs.map(([k, v]) => (field === k ? [k, ann] : [k, v]));
+    }
+    return annotatePairs(pairs);
+}
+
 export function annotateField(
     object: { [string]: mixed },
     field: string,
