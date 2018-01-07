@@ -7,6 +7,15 @@ import type { Annotation, Maybe } from './ast';
 
 type deliberatelyAny = $FlowFixMe;
 
+export function annotateField(
+    object: { [string]: mixed },
+    field: string,
+    annotation: Maybe<string>
+): Annotation<mixed> {
+    const pairs = Object.entries(object);
+    return annotatePairs(pairs.map(([k, v]) => (field === k ? [k, annotate(v, annotation)] : [k, v])));
+}
+
 // $FlowFixMe: this signature stinks
 export function annotatePairs(value, annotation: Maybe<string>): Annotation<mixed> {
     const pairs = value.map(([k, v]) => {
