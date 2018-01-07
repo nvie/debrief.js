@@ -63,6 +63,20 @@ describe('debrief', () => {
         );
     });
 
+    it('objects that are themselves annotated', () => {
+        debrief(
+            [annotate({ name: 123 }, 'Missing key "foo"')],
+            `
+              [
+                {
+                  "name": 123,
+                },
+                ^ Missing key "foo"
+              ]
+            `
+        );
+    });
+
     it('serializes data inside objects', () => {
         // const test2 = annotateField({ name: 1234 }, 'name', 'The name should be a string');
         // should produce:

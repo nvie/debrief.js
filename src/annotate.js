@@ -42,7 +42,7 @@ export default function annotate<T>(value: deliberatelyAny, annotation: Maybe<st
             return value;
         }
     } else if (typeof value === 'object') {
-        return annotatePairs(Object.entries(value));
+        return annotatePairs(Object.entries(value), annotation);
     }
 
     throw new Error('Unknown JavaScript type: cannot annotate');
