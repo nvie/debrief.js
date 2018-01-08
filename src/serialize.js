@@ -1,27 +1,9 @@
 // @flow
 
 import type { Annotation, Maybe } from './ast';
+import { INDENT, indent, isMultiline } from './utils';
 
 type deliberatelyAny = $FlowFixMe;
-
-// Two spaces of indentation
-const INDENT = '  ';
-
-function isMultiline(s: string): boolean {
-    const linecount = s.split('\n').length;
-    return linecount > 1;
-}
-
-function indent(s: string, prefix: string = INDENT): string {
-    if (isMultiline(s)) {
-        return s
-            .split('\n')
-            .map(line => prefix + line)
-            .join('\n');
-    } else {
-        return prefix + s;
-    }
-}
 
 function serializeString(s: deliberatelyAny, width: number = 80) {
     // Full string
