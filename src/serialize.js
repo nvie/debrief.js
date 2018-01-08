@@ -4,6 +4,25 @@ import type { Annotation, Maybe } from './ast';
 
 type deliberatelyAny = $FlowFixMe;
 
+// Two spaces of indentation
+const INDENT = '  ';
+
+function isMultiline(s: string): boolean {
+    const linecount = s.split('\n').length;
+    return linecount > 1;
+}
+
+function indent(s: string, prefix: string = INDENT): string {
+    if (isMultiline(s)) {
+        return s
+            .split('\n')
+            .map(line => prefix + line)
+            .join('\n');
+    } else {
+        return prefix + s;
+    }
+}
+
 function serializeString(s: deliberatelyAny, width: number = 80) {
     // Full string
     // Abbreviated to $maxlen i.e. "Vincent Driess..." [truncated]
@@ -26,10 +45,10 @@ function* iterArray(arr: Array<Annotation<mixed>>, prefix: string) {
 
     yield '[';
     for (const item of arr) {
-        const [ser, ann] = serializeAnnotation(item, prefix + '  ');
-        yield prefix + '  ' + ser + ',';
+        const [ser, ann] = serializeAnnotation(item, prefix + INDENT);
+        yield prefix + INDENT + ser + ',';
         if (ann !== undefined) {
-            yield prefix + '  ' + ann;
+            yield indent(ann, prefix + INDENT);
         }
     }
     yield prefix + ']';
@@ -41,18 +60,23 @@ function serializeArray(value: Array<Annotation<mixed>>, hasAnnotations: boolean
 }
 
 function* iterObject(pairs: Array<{ key: Annotation<mixed>, value: Annotation<mixed> }>, prefix: string) {
+    if (pairs.length === 0) {
+        yield '{}';
+        return;
+    }
+
     yield '{';
     for (const pair of pairs) {
         const key: Annotation<mixed> = pair.key;
         const value: Annotation<mixed> = pair.value;
         const [kser /* , kann */] = serializeAnnotation(key);
 
-        const valPrefix = prefix + '  ' + ' '.repeat(kser.length + 2);
+        const valPrefix = prefix + INDENT + ' '.repeat(kser.length + 2);
         const [vser, vann] = serializeAnnotation(value, valPrefix);
 
-        yield prefix + '  ' + kser + ': ' + vser + ',';
+        yield prefix + INDENT + kser + ': ' + vser + ',';
         if (vann !== undefined) {
-            yield valPrefix + vann;
+            yield indent(vann, valPrefix);
         }
     }
     yield prefix + '}';
@@ -103,9 +127,8 @@ export function serializeAnnotation(ann: Annotation<mixed>, prefix: string = '')
 
     const annotation = ann.annotation;
     if (annotation !== undefined) {
-        const linecount = serialized.split('\n').length;
-        const sep = '^'.repeat(linecount > 1 ? 1 : serialized.length);
-        return [serialized, `${sep} ${annotation}`];
+        const sep = '^'.repeat(isMultiline(serialized) ? 1 : serialized.length);
+        return [serialized, [sep, annotation].join(isMultiline(annotation) ? '\n' : ' ')];
     } else {
         return [serialized, undefined];
     }

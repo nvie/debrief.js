@@ -47,6 +47,33 @@ describe('debrief', () => {
         );
     });
 
+    it('prints annotations with multiple lines', () => {
+        debrief(
+            [annotate(123, 'Must be one of:\n1. a float\n2. a string')],
+            `
+              [
+                123,
+                ^^^
+                Must be one of:
+                1. a float
+                2. a string
+              ]
+            `
+        );
+        debrief(
+            { name: annotate(123, 'Must be one of:\n1. a float\n2. a string') },
+            `
+              {
+                "name": 123,
+                        ^^^
+                        Must be one of:
+                        1. a float
+                        2. a string
+              }
+            `
+        );
+    });
+
     it('serializes data inside arrays', () => {
         debrief(
             [[annotate(1234, 'ABC')], annotate(true, 'not false')],
