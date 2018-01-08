@@ -54,11 +54,11 @@ function* iterObject(pairs: Array<{ key: Annotation<mixed>, value: Annotation<mi
         const [kser /* , kann */] = serializeAnnotation(key);
 
         const valPrefix = prefix + INDENT + ' '.repeat(kser.length + 2);
-        const [vser, vann] = serializeAnnotation(value, valPrefix);
+        const [vser, vann] = serializeAnnotation(value, prefix + INDENT);
 
         yield prefix + INDENT + kser + ': ' + vser + ',';
         if (vann !== undefined) {
-            yield indent(vann, isMultiline(vser) ? INDENT : valPrefix);
+            yield indent(vann, valPrefix);
         }
     }
     yield prefix + '}';
