@@ -58,7 +58,7 @@ function* iterObject(pairs: Array<{ key: Annotation<mixed>, value: Annotation<mi
 
         yield prefix + INDENT + kser + ': ' + vser + ',';
         if (vann !== undefined) {
-            yield indent(vann, valPrefix);
+            yield indent(vann, isMultiline(vser) ? INDENT : valPrefix);
         }
     }
     yield prefix + '}';
