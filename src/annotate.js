@@ -18,13 +18,8 @@ export function annotateFields(
     return annotatePairs(pairs);
 }
 
-export function annotateField(
-    object: { [string]: mixed },
-    field: string,
-    annotation: Maybe<string>
-): Annotation<mixed> {
-    const pairs = Object.entries(object);
-    return annotatePairs(pairs.map(([k, v]) => (field === k ? [k, annotate(v, annotation)] : [k, v])));
+export function annotateField(object: { [string]: mixed }, field: string, ann: Annotation<mixed>): Annotation<mixed> {
+    return annotateFields(object, [[field, ann]]);
 }
 
 // $FlowFixMe: this signature stinks
