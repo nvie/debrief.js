@@ -58,9 +58,6 @@
     "rimraf": "^2.6.2"
   },
   "dependencies": {},
-  "peerDependencies": {
-    "itertools": "^1.1.2"
-  },
   "jest": {
     "testPathIgnorePatterns": [
       "node_modules",

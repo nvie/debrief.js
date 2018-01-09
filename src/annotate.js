@@ -1,11 +1,20 @@
 // @flow
 
-import { any } from 'itertools';
-
 import { isAnnotation } from './ast';
 import type { Annotation, Maybe } from './ast';
 
 type deliberatelyAny = $FlowFixMe;
+
+// Taken from https://github.com/nvie/itertools.js#any and inlined here to
+// avoid a dependency on itertools just for this function
+export function any<T>(iterable: Iterable<T>, keyFn: T => boolean): boolean {
+    for (let item of iterable) {
+        if (keyFn(item)) {
+            return true;
+        }
+    }
+    return false;
+}
 
 export function annotateFields(
     object: { [string]: mixed },
