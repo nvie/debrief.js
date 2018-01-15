@@ -19,7 +19,7 @@ function serializeString(s: deliberatelyAny, width: number = 80) {
     return ser;
 }
 
-function* iterArray(arr: Array<Annotation<mixed>>, prefix: string) {
+function* iterArray(arr: Array<Annotation>, prefix: string) {
     if (arr.length === 0) {
         yield '[]';
         return;
@@ -36,12 +36,12 @@ function* iterArray(arr: Array<Annotation<mixed>>, prefix: string) {
     yield prefix + ']';
 }
 
-function serializeArray(value: Array<Annotation<mixed>>, hasAnnotations: boolean, prefix: string) {
+function serializeArray(value: Array<Annotation>, hasAnnotations: boolean, prefix: string) {
     // TODO: Inspect 'hasAnnotations' and decide whether to inline or expand serialize
     return [...iterArray(value, prefix)].join('\n');
 }
 
-function* iterObject(pairs: Array<{ key: Annotation<mixed>, value: Annotation<mixed> }>, prefix: string) {
+function* iterObject(pairs: Array<{ key: Annotation, value: Annotation }>, prefix: string) {
     if (pairs.length === 0) {
         yield '{}';
         return;
@@ -49,8 +49,8 @@ function* iterObject(pairs: Array<{ key: Annotation<mixed>, value: Annotation<mi
 
     yield '{';
     for (const pair of pairs) {
-        const key: Annotation<mixed> = pair.key;
-        const value: Annotation<mixed> = pair.value;
+        const key: Annotation = pair.key;
+        const value: Annotation = pair.value;
         const [kser /* , kann */] = serializeAnnotation(key);
 
         const valPrefix = prefix + INDENT + ' '.repeat(kser.length + 2);
@@ -65,7 +65,7 @@ function* iterObject(pairs: Array<{ key: Annotation<mixed>, value: Annotation<mi
 }
 
 function serializeObject(
-    value: Array<{ key: Annotation<mixed>, value: Annotation<mixed> }>,
+    value: Array<{ key: Annotation, value: Annotation }>,
     hasAnnotations: boolean,
     prefix: string
 ) {
@@ -89,17 +89,13 @@ export function serializeValue(value: deliberatelyAny): string {
     return '(unserializable)';
 }
 
-export function serializeAnnotation(ann: Annotation<mixed>, prefix: string = ''): [string, Maybe<string>] {
+export function serializeAnnotation(ann: Annotation, prefix: string = ''): [string, Maybe<string>] {
     let serialized;
     if (ann.type === 'array') {
-        serialized = serializeArray(
-            ((ann.value: deliberatelyAny): Array<Annotation<mixed>>),
-            ann.hasAnnotation,
-            prefix
-        );
+        serialized = serializeArray(((ann.value: deliberatelyAny): Array<Annotation>), ann.hasAnnotation, prefix);
     } else if (ann.type === 'object') {
         serialized = serializeObject(
-            ((ann.value: deliberatelyAny): Array<{ key: Annotation<mixed>, value: Annotation<mixed> }>),
+            ((ann.value: deliberatelyAny): Array<{ key: Annotation, value: Annotation }>),
             ann.hasAnnotation,
             prefix
         );
@@ -116,7 +112,7 @@ export function serializeAnnotation(ann: Annotation<mixed>, prefix: string = '')
     }
 }
 
-export default function serialize(ann: Annotation<*>): string {
+export default function serialize(ann: Annotation): string {
     const [serialized, annotation] = serializeAnnotation(ann);
     if (annotation !== undefined) {
         return `${serialized}\n${annotation}`;

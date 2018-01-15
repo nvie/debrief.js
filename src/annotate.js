@@ -3,8 +3,6 @@
 import { isAnnotation } from './ast';
 import type { Annotation, Maybe } from './ast';
 
-type deliberatelyAny = $FlowFixMe;
-
 // Taken from https://github.com/nvie/itertools.js#any and inlined here to
 // avoid a dependency on itertools just for this function
 export function any<T>(iterable: Iterable<T>, keyFn: T => boolean): boolean {
@@ -16,10 +14,7 @@ export function any<T>(iterable: Iterable<T>, keyFn: T => boolean): boolean {
     return false;
 }
 
-export function annotateFields(
-    object: { [string]: mixed },
-    fields: Array<[/* key */ string, Annotation<mixed>]>
-): Annotation<mixed> {
+export function annotateFields(object: { [string]: mixed }, fields: Array<[/* key */ string, Annotation]>): Annotation {
     let pairs = Object.entries(object);
     for (const [field, ann] of fields) {
         pairs = pairs.map(([k, v]) => (field === k ? [k, ann] : [k, v]));
@@ -27,12 +22,12 @@ export function annotateFields(
     return annotatePairs(pairs);
 }
 
-export function annotateField(object: { [string]: mixed }, field: string, ann: Annotation<mixed>): Annotation<mixed> {
+export function annotateField(object: { [string]: mixed }, field: string, ann: Annotation): Annotation {
     return annotateFields(object, [[field, ann]]);
 }
 
 // $FlowFixMe: this signature stinks
-export function annotatePairs(value, annotation: Maybe<string>): Annotation<mixed> {
+export function annotatePairs(value, annotation: Maybe<string>): Annotation {
     const pairs = value.map(([k, v]) => {
         return { key: annotate(k), value: annotate(v) };
     });
@@ -40,7 +35,7 @@ export function annotatePairs(value, annotation: Maybe<string>): Annotation<mixe
     return { type: 'object', value: pairs, hasAnnotation, annotation };
 }
 
-export default function annotate<T>(value: deliberatelyAny, annotation: Maybe<string>): Annotation<T> {
+export default function annotate(value: mixed, annotation: Maybe<string>): Annotation {
     let hasAnnotation = annotation !== undefined;
 
     if (typeof value === 'string') {
@@ -60,10 +55,11 @@ export default function annotate<T>(value: deliberatelyAny, annotation: Maybe<st
         hasAnnotation = any(value, ann => ann.hasAnnotation);
         return { type: 'array', value, hasAnnotation, annotation };
     } else if (isAnnotation(value)) {
+        const ann: Annotation = ((value: $FlowFixMe): Annotation);
         if (annotation !== undefined) {
-            return { ...value, annotation, hasAnnotation };
+            return { ...ann, annotation, hasAnnotation };
         } else {
-            return value;
+            return ann;
         }
     } else if (typeof value === 'object') {
         return annotatePairs(Object.entries(value), annotation);

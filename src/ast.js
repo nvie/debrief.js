@@ -2,9 +2,9 @@
 
 export type Maybe<T> = T | void;
 
-export type Annotation<T> = {
+export type Annotation = {
     type: 'null' | 'undefined' | 'string' | 'number' | 'boolean' | 'array' | 'object' | 'date',
-    value: T,
+    value: mixed,
 
     // True if this node has any annotations itself, or its children do
     hasAnnotation: boolean,
