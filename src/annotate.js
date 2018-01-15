@@ -14,15 +14,18 @@ export function any<T>(iterable: Iterable<T>, keyFn: T => boolean): boolean {
     return false;
 }
 
-export function annotateFields(object: { [string]: mixed }, fields: Array<[/* key */ string, Annotation]>): Annotation {
+export function annotateFields(
+    object: { [string]: mixed },
+    fields: Array<[/* key */ string, string | Annotation]>
+): Annotation {
     let pairs = Object.entries(object);
     for (const [field, ann] of fields) {
-        pairs = pairs.map(([k, v]) => (field === k ? [k, ann] : [k, v]));
+        pairs = pairs.map(([k, v]) => (field === k ? [k, typeof ann === 'string' ? annotate(v, ann) : ann] : [k, v]));
     }
     return annotatePairs(pairs);
 }
 
-export function annotateField(object: { [string]: mixed }, field: string, ann: Annotation): Annotation {
+export function annotateField(object: { [string]: mixed }, field: string, ann: string | Annotation): Annotation {
     return annotateFields(object, [[field, ann]]);
 }
 
@@ -65,5 +68,6 @@ export default function annotate(value: mixed, annotation: Maybe<string>): Annot
         return annotatePairs(Object.entries(value), annotation);
     }
 
+    // istanbul ignore next
     throw new Error('Unknown JavaScript type: cannot annotate');
 }

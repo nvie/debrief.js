@@ -1,6 +1,6 @@
 // @flow
 
-import annotate, { annotatePairs } from '../annotate';
+import annotate, { annotateField, annotatePairs } from '../annotate';
 
 describe('parsing (scalars)', () => {
     it('strings', () => {
@@ -44,6 +44,26 @@ describe('parsing (scalars)', () => {
             type: 'date',
             value: nyd,
             annotation: "new year's day",
+            hasAnnotation: true,
+        });
+    });
+
+    it('null', () => {
+        expect(annotate(null)).toEqual({ type: 'null', value: null, annotation: undefined, hasAnnotation: false });
+        expect(annotate(null, 'foo')).toEqual({ type: 'null', value: null, annotation: 'foo', hasAnnotation: true });
+    });
+
+    it('undefined', () => {
+        expect(annotate(undefined)).toEqual({
+            type: 'undefined',
+            value: undefined,
+            annotation: undefined,
+            hasAnnotation: false,
+        });
+        expect(annotate(undefined, 'foo')).toEqual({
+            type: 'undefined',
+            value: undefined,
+            annotation: 'foo',
             hasAnnotation: true,
         });
     });
@@ -119,6 +139,21 @@ describe('parsing (composite)', () => {
         });
     });
 
+    it('objects (keys annotated)', () => {
+        const obj = [[annotate('name', 'missing'), '???']];
+        expect(annotatePairs(obj)).toEqual({
+            type: 'object',
+            value: [
+                {
+                    key: { type: 'string', value: 'name', annotation: 'missing', hasAnnotation: true },
+                    value: { type: 'string', value: '???', annotation: undefined, hasAnnotation: false },
+                },
+            ],
+            annotation: undefined,
+            hasAnnotation: true,
+        });
+    });
+
     it('objects (values annotated)', () => {
         const obj = { name: annotate('nvie', 'Vincent'), age: 36 };
         expect(annotate(obj)).toEqual({
@@ -138,14 +173,29 @@ describe('parsing (composite)', () => {
         });
     });
 
-    it('objects (keys annotated)', () => {
-        const obj = [[annotate('name', 'missing'), '???']];
-        expect(annotatePairs(obj)).toEqual({
+    it('objects (via annotateField helper)', () => {
+        // Annotate with a simple string
+        const obj = { name: null };
+        expect(annotateField(obj, 'name', 'Missing!')).toEqual({
             type: 'object',
             value: [
                 {
-                    key: { type: 'string', value: 'name', annotation: 'missing', hasAnnotation: true },
-                    value: { type: 'string', value: '???', annotation: undefined, hasAnnotation: false },
+                    key: { type: 'string', value: 'name', annotation: undefined, hasAnnotation: false },
+                    value: { type: 'null', value: null, annotation: 'Missing!', hasAnnotation: true },
+                },
+            ],
+            annotation: undefined,
+            hasAnnotation: true,
+        });
+
+        // Annotate with a full annotation object (able to change the annotate value itself)
+        const obj2 = { name: null };
+        expect(annotateField(obj2, 'name', annotate('example', 'An example value'))).toEqual({
+            type: 'object',
+            value: [
+                {
+                    key: { type: 'string', value: 'name', annotation: undefined, hasAnnotation: false },
+                    value: { type: 'string', value: 'example', annotation: 'An example value', hasAnnotation: true },
                 },
             ],
             annotation: undefined,
