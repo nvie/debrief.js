@@ -11,9 +11,9 @@ export type Annotation<T> = {
     annotation: Maybe<string>,
 };
 
-// $FlowFixMe
-export function isAnnotation(value: any): boolean {
+export function isAnnotation(value: mixed): boolean {
     return (
+        value !== null &&
         typeof value === 'object' &&
         value.hasOwnProperty('type') &&
         value.hasOwnProperty('value') &&
