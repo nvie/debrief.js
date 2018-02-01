@@ -2,7 +2,7 @@
 
 export type Maybe<T> = T | void;
 
-export type AnnScalar = {
+export type ScalarAnnotation = {
     type: 'null' | 'undefined' | 'string' | 'number' | 'boolean' | 'date',
     value: mixed,
     hasAnnotation: boolean, // TODO: Remove (makes no sense on scalar)
@@ -11,47 +11,50 @@ export type AnnScalar = {
 
 export type AnnPair = { key: string, value: Annotation };
 
-export type AnnObject = {
+export type ObjectAnnotation = {
     type: 'object',
     pairs: Array<AnnPair>,
     hasAnnotation: boolean,
     annotation: Maybe<string>,
 };
 
-export type AnnArray = {
+export type ArrayAnnotation = {
     type: 'array',
     items: Array<Annotation>,
     hasAnnotation: boolean,
     annotation: Maybe<string>,
 };
 
-export type Annotation = AnnObject | AnnArray | AnnScalar;
+export type Annotation = ObjectAnnotation | ArrayAnnotation | ScalarAnnotation;
 
-export const isAnnObject = (value: mixed): boolean %checks =>
+export const isObjectAnnotation = (value: mixed): boolean %checks =>
     value !== null &&
     typeof value === 'object' &&
     value.type === 'object' &&
     Array.isArray(value.pairs) &&
     typeof value.hasAnnotation === 'boolean';
 
-export const isAnnArray = (value: mixed): boolean %checks =>
+export const isArrayAnnotation = (value: mixed): boolean %checks =>
     value !== null &&
     typeof value === 'object' &&
     value.type === 'array' &&
     Array.isArray(value.items) &&
     typeof value.hasAnnotation === 'boolean';
 
-export const isAnnScalar = (value: mixed): boolean %checks =>
+export const isScalarAnnotation = (value: mixed): boolean %checks =>
     value !== null &&
     typeof value === 'object' &&
-    (value.type === 'string' ||
-        value.type === 'null' ||
-        value.type === 'undefined' ||
-        value.type === 'number' ||
-        value.type === 'boolean' ||
-        value.type === 'date') &&
+    isScalarValueType(value.type) &&
     typeof value.hasAnnotation === 'boolean';
 
+const isScalarValueType = (typeName: mixed): boolean =>
+    typeName === 'string' ||
+    typeName === 'null' ||
+    typeName === 'undefined' ||
+    typeName === 'number' ||
+    typeName === 'boolean' ||
+    typeName === 'date';
+
 export function isAnnotation(value: mixed): boolean %checks {
-    return isAnnObject(value) || isAnnArray(value) || isAnnScalar(value);
+    return isObjectAnnotation(value) || isArrayAnnotation(value) || isScalarAnnotation(value);
 }

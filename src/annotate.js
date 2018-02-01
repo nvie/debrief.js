@@ -1,7 +1,7 @@
 // @flow
 
 import { isAnnotation } from './ast';
-import type { AnnObject, Annotation, Maybe } from './ast';
+import type { Annotation, Maybe, ObjectAnnotation } from './ast';
 
 type cast = $FlowFixMe;
 
@@ -19,7 +19,7 @@ export function any<T>(iterable: Iterable<T>, keyFn: T => boolean): boolean {
 export function annotateFields(
     object: { [string]: mixed },
     fields: Array<[/* key */ string, string | Annotation]>
-): AnnObject {
+): ObjectAnnotation {
     let pairs = Object.entries(object);
     for (const [field, ann] of fields) {
         pairs = pairs.map(([k, v]) => (field === k ? [k, typeof ann === 'string' ? annotate(v, ann) : ann] : [k, v]));
@@ -27,11 +27,11 @@ export function annotateFields(
     return annotatePairs(pairs);
 }
 
-export function annotateField(object: { [string]: mixed }, field: string, ann: string | Annotation): AnnObject {
+export function annotateField(object: { [string]: mixed }, field: string, ann: string | Annotation): ObjectAnnotation {
     return annotateFields(object, [[field, ann]]);
 }
 
-export function annotatePairs(value: Array<[string, mixed]>, annotation: Maybe<string>): AnnObject {
+export function annotatePairs(value: Array<[string, mixed]>, annotation: Maybe<string>): ObjectAnnotation {
     const pairs = value.map(([key, v]) => {
         return { key, value: annotate(v) };
     });
