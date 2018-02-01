@@ -4,6 +4,13 @@ v0.2.0
 
 - Dropped support for annotating object keys
 
+**New features:**
+
+- Add new serializers optimized for web/JSON output.
+  * For full inline annotated objects, use `serialize()`
+  * For less verbose output (a list of errors and their locations, not the
+    entire data structure echoed back), use `summarize()`
+
 
 v0.1.0
 ------
