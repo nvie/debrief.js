@@ -9,7 +9,9 @@ function debrief(input, expected) {
 }
 
 describe('serialize', () => {
-    it('serializes normal JS values', () => {
+    it('serializes scalar values', () => {
+        debrief(undefined, 'undefined');
+        debrief(null, 'null');
         debrief(1234, '1234');
         debrief(true, 'true');
         debrief('foo', '"foo"');
@@ -45,6 +47,27 @@ describe('serialize', () => {
               ^^^^^ This is a foo
             `
         );
+        debrief(
+            annotate(new Date(Date.UTC(2017, 11, 25)), 'Merry X-mas!'),
+            `
+              new Date("2017-12-25T00:00:00.000Z")
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Merry X-mas!
+            `
+        );
+        debrief(
+            annotate([], 'must not be empty'),
+            `
+              []
+              ^^ must not be empty
+            `
+        );
+        debrief(
+            annotate({}, 'must not be empty'),
+            `
+              {}
+              ^^ must not be empty
+            `
+        );
     });
 
     it('prints annotations with multiple lines', () => {
@@ -70,6 +93,15 @@ describe('serialize', () => {
                         1. a float
                         2. a string
               }
+            `
+        );
+    });
+
+    it('cuts off long strings beyond a certain length', () => {
+        debrief(
+            'Lorem ipsum dolor sit amet, consectetur adipiscing elit.  Etiam lacus ligula, accumsan id imperdiet rhoncus, dapibus vitae arcu.  Nulla non quam erat, luctus consequat nisi.  Integer hendrerit lacus sagittis erat fermentum tincidunt.  Cras vel dui neque.  In sagittis commodo luctus.  Mauris non metus dolor, ut suscipit dui.  Aliquam mauris lacus, laoreet et consequat quis, bibendum id ipsum.  Donec gravida, diam id imperdiet cursus, nunc nisl bibendum sapien, eget tempor neque elit in tortor.',
+            `
+              "Lorem ipsum dolor sit amet, consectetur adipiscing elit.  Etiam l..." [truncated]
             `
         );
     });

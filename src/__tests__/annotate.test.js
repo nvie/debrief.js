@@ -1,6 +1,22 @@
 // @flow
 
 import annotate, { annotateField } from '../annotate';
+import { isAnnotation } from '../ast';
+
+describe('annotation detection', () => {
+    it('detects annotation instances', () => {
+        expect(isAnnotation(undefined)).toBe(false);
+        expect(isAnnotation(null)).toBe(false);
+        expect(isAnnotation(42)).toBe(false);
+        expect(isAnnotation('foo')).toBe(false);
+        expect(isAnnotation([])).toBe(false);
+        expect(isAnnotation({})).toBe(false);
+        expect(isAnnotation({ type: 'foo' })).toBe(false);
+        expect(isAnnotation({ type: 'ObjectAnnotation' })).toBe(true);
+        expect(isAnnotation({ type: 'ArrayAnnotation' })).toBe(true);
+        expect(isAnnotation({ type: 'ScalarAnnotation' })).toBe(true);
+    });
+});
 
 describe('parsing (scalars)', () => {
     it('strings', () => {
@@ -241,15 +257,15 @@ describe('parsing (composite)', () => {
 
 describe('parsing is idempotent', () => {
     it('parsing an annotation returns itself', () => {
-        const value = 'foo';
-        const expected = { type: 'ScalarAnnotation', value: 'foo', annotation: undefined, hasAnnotation: false };
+        for (const value of ['a string', 42, [], {}]) {
+            // Annotated once yields an Annotation, but annotating it more often
+            // has no effect on the result
+            const once = annotate(value);
+            expect(annotate(annotate(annotate(once)))).toEqual(once);
 
-        expect(annotate(value)).toEqual(expected);
-        expect(annotate(annotate(value))).toEqual(expected);
-        expect(annotate(annotate(annotate(annotate(annotate(value)))))).toEqual(expected);
-
-        // But providing a new value will update the existing annotation!
-        expect(annotate(annotate(value), 'foo').annotation).toEqual('foo');
-        expect(annotate(annotate(annotate(value), 'foo'), 'bar').annotation).toEqual('bar');
+            // But providing a new value will update the existing annotation!
+            expect(annotate(annotate(value), 'foo').annotation).toEqual('foo');
+            expect(annotate(annotate(annotate(value), 'foo'), 'bar').annotation).toEqual('bar');
+        }
     });
 });

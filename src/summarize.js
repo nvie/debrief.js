@@ -4,7 +4,11 @@ import type { Annotation } from './ast';
 
 type Keypath = Array<number | string>;
 
-function* iterSummarize(ann: Annotation, keypath: Keypath = []): Iterable<string> {
+/**
+ * Walks the annotation tree and emits the annotation's key path within the
+ * object tree, and the message as a series of messages (array of strings).
+ */
+function* iterSummarize(ann: Annotation, keypath: Keypath): Iterable<string> {
     if (ann.type === 'ArrayAnnotation') {
         const items = ann.items;
         let index = 0;
@@ -37,6 +41,10 @@ function* iterSummarize(ann: Annotation, keypath: Keypath = []): Iterable<string
     yield `${prefix}${annotation}`;
 }
 
+/**
+ * Walks the annotation tree and emits the annotation's key path within the
+ * object tree, and the message as a series of messages (array of strings).
+ */
 export default function summarize(ann: Annotation, keypath: Keypath = []): Array<string> {
     return [...iterSummarize(ann, keypath)];
 }

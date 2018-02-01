@@ -76,10 +76,11 @@ export function serializeValue(value: mixed): string {
     } else if (value === undefined) {
         return 'undefined';
     } else if (value instanceof Date) {
-        return `new Date(${JSON.stringify(value.toString())})`;
+        return `new Date(${JSON.stringify(value.toISOString())})`;
+    } else {
+        // istanbul ignore next
+        return '(unserializable)';
     }
-
-    return '(unserializable)';
 }
 
 export function serializeAnnotation(ann: Annotation, prefix: string = ''): [string, Maybe<string>] {

@@ -61,6 +61,7 @@ export default function annotate(value: mixed, annotation: Maybe<string>): Annot
             } else if (ann.type === 'ScalarAnnotation') {
                 return { type: ann.type, value: ann.value, annotation, hasAnnotation };
             } else {
+                // istanbul ignore next
                 throw new Error('Unknown type');
             }
         } else if (Array.isArray(value)) {
