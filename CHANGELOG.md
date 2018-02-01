@@ -12,6 +12,7 @@ v0.2.0
   * For full inline annotated objects, use `serialize()`
   * For less verbose output (a list of errors and their locations, not the
     entire data structure echoed back), use `summarize()`
+- 💯  100% code coverage achieved!
 
 
 v0.1.0

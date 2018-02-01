@@ -235,7 +235,7 @@ describe('parsing (composite)', () => {
         });
 
         // Annotate with a full annotation object (able to change the annotate value itself)
-        const obj2 = { name: null };
+        const obj2 = { name: null, age: 20 };
         expect(annotateField(obj2, 'name', annotate('example', 'An example value'))).toEqual({
             type: 'ObjectAnnotation',
             pairs: [
@@ -246,6 +246,15 @@ describe('parsing (composite)', () => {
                         value: 'example',
                         annotation: 'An example value',
                         hasAnnotation: true,
+                    },
+                },
+                {
+                    key: 'age',
+                    value: {
+                        type: 'ScalarAnnotation',
+                        value: 20,
+                        annotation: undefined,
+                        hasAnnotation: false,
                     },
                 },
             ],

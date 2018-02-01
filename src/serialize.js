@@ -67,10 +67,11 @@ function serializeObject(pairs: Array<AnnPair>, hasAnnotations: boolean, prefix:
 }
 
 export function serializeValue(value: mixed): string {
+    // istanbul ignore else
     if (typeof value === 'string') {
         return serializeString(value);
     } else if (typeof value === 'number' || typeof value === 'boolean') {
-        return JSON.stringify(value);
+        return value.toString();
     } else if (value === null) {
         return 'null';
     } else if (value === undefined) {
@@ -78,7 +79,6 @@ export function serializeValue(value: mixed): string {
     } else if (value instanceof Date) {
         return `new Date(${JSON.stringify(value.toISOString())})`;
     } else {
-        // istanbul ignore next
         return '(unserializable)';
     }
 }

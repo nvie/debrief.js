@@ -20,7 +20,15 @@ export function annotateFields(
 ): ObjectAnnotation {
     let pairs = Object.entries(object);
     for (const [field, ann] of fields) {
-        pairs = pairs.map(([k, v]) => (field === k ? [k, typeof ann === 'string' ? annotate(v, ann) : ann] : [k, v]));
+        // prettier-ignore
+        pairs = pairs.map(([k, v]) => (
+            field === k
+                ? [
+                    k,
+                    typeof ann === 'string' ? annotate(v, ann) : ann,
+                ]
+                : [k, v]
+        ));
     }
     return annotatePairs(pairs);
 }
@@ -58,21 +66,16 @@ export default function annotate(value: mixed, annotation: Maybe<string>): Annot
                 return { type: 'ObjectAnnotation', pairs: ann.pairs, annotation, hasAnnotation };
             } else if (ann.type === 'ArrayAnnotation') {
                 return { type: 'ArrayAnnotation', items: ann.items, annotation, hasAnnotation };
-            } else if (ann.type === 'ScalarAnnotation') {
-                return { type: ann.type, value: ann.value, annotation, hasAnnotation };
             } else {
-                // istanbul ignore next
-                throw new Error('Unknown type');
+                return { type: 'ScalarAnnotation', value: ann.value, annotation, hasAnnotation };
             }
         } else if (Array.isArray(value)) {
             const items = value.map(v => annotate(v));
             hasAnnotation = any(items, ann => ann.hasAnnotation);
             return { type: 'ArrayAnnotation', items, hasAnnotation, annotation };
-        } else if (typeof value === 'object') {
+        } else {
+            /* typeof value === 'object' */
             return annotatePairs(Object.entries(value), annotation);
         }
-
-        // istanbul ignore next
-        throw new Error('Unknown JavaScript type: cannot annotate');
     }
 }

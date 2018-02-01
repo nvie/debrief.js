@@ -70,6 +70,16 @@ describe('serialize', () => {
         );
     });
 
+    it('cannot serialize custom objects out of the box', () => {
+        debrief(
+            annotate(Number.NEGATIVE_INFINITY, 'Not finite'),
+            `
+              -Infinity
+              ^^^^^^^^^ Not finite
+            `
+        );
+    });
+
     it('prints annotations with multiple lines', () => {
         debrief(
             [annotate(123, 'Must be one of:\n1. a float\n2. a string')],
