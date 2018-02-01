@@ -8,7 +8,7 @@ function debrief(input, expected) {
     expect(serialize(annotate(input))).toEqual(dedent(expected));
 }
 
-describe('debrief', () => {
+describe('serialize', () => {
     it('serializes normal JS values', () => {
         debrief(1234, '1234');
         debrief(true, 'true');
@@ -105,9 +105,6 @@ describe('debrief', () => {
     });
 
     it('serializes data inside objects', () => {
-        // const test2 = annotateField({ name: 1234 }, 'name', 'The name should be a string');
-        // should produce:
-        // THIS YET FAILS BECAUSE THE "name: " prefix isn't added!
         debrief(
             { name: annotate(123, 'The name should be a string') },
             `
@@ -117,8 +114,5 @@ describe('debrief', () => {
               }
             `
         );
-
-        // const structure = [{ name: 'Peter' }, { name: 'John', email: 123 }];
-        // const test2 = annotateKeyPath(structure, [1, 'email', 'Must be string']);
     });
 });
