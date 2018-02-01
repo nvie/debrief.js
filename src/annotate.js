@@ -1,7 +1,9 @@
 // @flow
 
 import { isAnnotation } from './ast';
-import type { Annotation, Maybe } from './ast';
+import type { AnnObject, Annotation, Maybe } from './ast';
+
+type cast = $FlowFixMe;
 
 // Taken from https://github.com/nvie/itertools.js#any and inlined here to
 // avoid a dependency on itertools just for this function
@@ -17,7 +19,7 @@ export function any<T>(iterable: Iterable<T>, keyFn: T => boolean): boolean {
 export function annotateFields(
     object: { [string]: mixed },
     fields: Array<[/* key */ string, string | Annotation]>
-): Annotation {
+): AnnObject {
     let pairs = Object.entries(object);
     for (const [field, ann] of fields) {
         pairs = pairs.map(([k, v]) => (field === k ? [k, typeof ann === 'string' ? annotate(v, ann) : ann] : [k, v]));
@@ -25,17 +27,16 @@ export function annotateFields(
     return annotatePairs(pairs);
 }
 
-export function annotateField(object: { [string]: mixed }, field: string, ann: string | Annotation): Annotation {
+export function annotateField(object: { [string]: mixed }, field: string, ann: string | Annotation): AnnObject {
     return annotateFields(object, [[field, ann]]);
 }
 
-// $FlowFixMe: this signature stinks
-export function annotatePairs(value, annotation: Maybe<string>): Annotation {
-    const pairs = value.map(([k, v]) => {
-        return { key: annotate(k), value: annotate(v) };
+export function annotatePairs(value: Array<[string, mixed]>, annotation: Maybe<string>): AnnObject {
+    const pairs = value.map(([key, v]) => {
+        return { key, value: annotate(v) };
     });
-    const hasAnnotation = any(pairs, pair => pair.key.hasAnnotation || pair.value.hasAnnotation);
-    return { type: 'object', value: pairs, hasAnnotation, annotation };
+    const hasAnnotation = any(pairs, pair => pair.value.hasAnnotation);
+    return { type: 'object', pairs, hasAnnotation, annotation };
 }
 
 export default function annotate(value: mixed, annotation: Maybe<string>): Annotation {
@@ -54,13 +55,19 @@ export default function annotate(value: mixed, annotation: Maybe<string>): Annot
     } else if (typeof value.getMonth === 'function') {
         return { type: 'date', value, hasAnnotation, annotation };
     } else if (Array.isArray(value)) {
-        value = value.map(v => annotate(v));
-        hasAnnotation = any(value, ann => ann.hasAnnotation);
-        return { type: 'array', value, hasAnnotation, annotation };
+        const items = value.map(v => annotate(v));
+        hasAnnotation = any(items, ann => ann.hasAnnotation);
+        return { type: 'array', items, hasAnnotation, annotation };
     } else if (isAnnotation(value)) {
-        const ann: Annotation = ((value: $FlowFixMe): Annotation);
+        const ann: Annotation = ((value: cast): Annotation);
         if (annotation !== undefined) {
-            return { ...ann, annotation, hasAnnotation };
+            if (ann.type === 'object') {
+                return { type: 'object', pairs: ann.pairs, annotation, hasAnnotation };
+            } else if (ann.type === 'array') {
+                return { type: 'array', items: ann.items, annotation, hasAnnotation };
+            } else {
+                return { type: ann.type, value: ann.value, annotation, hasAnnotation };
+            }
         } else {
             return ann;
         }

@@ -2,22 +2,56 @@
 
 export type Maybe<T> = T | void;
 
-export type Annotation = {
-    type: 'null' | 'undefined' | 'string' | 'number' | 'boolean' | 'array' | 'object' | 'date',
+export type AnnScalar = {
+    type: 'null' | 'undefined' | 'string' | 'number' | 'boolean' | 'date',
     value: mixed,
+    hasAnnotation: boolean, // TODO: Remove (makes no sense on scalar)
+    annotation: Maybe<string>,
+};
 
-    // True if this node has any annotations itself, or its children do
+export type AnnPair = { key: string, value: Annotation };
+
+export type AnnObject = {
+    type: 'object',
+    pairs: Array<AnnPair>,
     hasAnnotation: boolean,
     annotation: Maybe<string>,
 };
 
-export function isAnnotation(value: mixed): boolean {
-    return (
-        value !== null &&
-        typeof value === 'object' &&
-        value.hasOwnProperty('type') &&
-        value.hasOwnProperty('value') &&
-        value.hasOwnProperty('annotation') &&
-        value.hasOwnProperty('hasAnnotation')
-    );
+export type AnnArray = {
+    type: 'array',
+    items: Array<Annotation>,
+    hasAnnotation: boolean,
+    annotation: Maybe<string>,
+};
+
+export type Annotation = AnnObject | AnnArray | AnnScalar;
+
+export const isAnnObject = (value: mixed): boolean %checks =>
+    value !== null &&
+    typeof value === 'object' &&
+    value.type === 'object' &&
+    Array.isArray(value.pairs) &&
+    typeof value.hasAnnotation === 'boolean';
+
+export const isAnnArray = (value: mixed): boolean %checks =>
+    value !== null &&
+    typeof value === 'object' &&
+    value.type === 'array' &&
+    Array.isArray(value.items) &&
+    typeof value.hasAnnotation === 'boolean';
+
+export const isAnnScalar = (value: mixed): boolean %checks =>
+    value !== null &&
+    typeof value === 'object' &&
+    (value.type === 'string' ||
+        value.type === 'null' ||
+        value.type === 'undefined' ||
+        value.type === 'number' ||
+        value.type === 'boolean' ||
+        value.type === 'date') &&
+    typeof value.hasAnnotation === 'boolean';
+
+export function isAnnotation(value: mixed): boolean %checks {
+    return isAnnObject(value) || isAnnArray(value) || isAnnScalar(value);
 }

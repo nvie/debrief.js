@@ -1,6 +1,6 @@
 // @flow
 
-import annotate, { annotateField, annotatePairs } from '../annotate';
+import annotate, { annotateField } from '../annotate';
 
 describe('parsing (scalars)', () => {
     it('strings', () => {
@@ -74,7 +74,7 @@ describe('parsing (composite)', () => {
         const arr1 = [1, 'foo'];
         expect(annotate(arr1)).toEqual({
             type: 'array',
-            value: [
+            items: [
                 {
                     type: 'number',
                     value: 1,
@@ -95,7 +95,7 @@ describe('parsing (composite)', () => {
         const arr2 = [annotate(1, 'uno'), 'foo'];
         expect(annotate(arr2)).toEqual({
             type: 'array',
-            value: [
+            items: [
                 {
                     type: 'number',
                     value: 1,
@@ -118,14 +118,9 @@ describe('parsing (composite)', () => {
         const obj = { name: 'Frank' };
         expect(annotate(obj)).toEqual({
             type: 'object',
-            value: [
+            pairs: [
                 {
-                    key: {
-                        type: 'string',
-                        value: 'name',
-                        annotation: undefined,
-                        hasAnnotation: false,
-                    },
+                    key: 'name',
                     value: {
                         type: 'string',
                         value: 'Frank',
@@ -139,32 +134,17 @@ describe('parsing (composite)', () => {
         });
     });
 
-    it('objects (keys annotated)', () => {
-        const obj = [[annotate('name', 'missing'), '???']];
-        expect(annotatePairs(obj)).toEqual({
-            type: 'object',
-            value: [
-                {
-                    key: { type: 'string', value: 'name', annotation: 'missing', hasAnnotation: true },
-                    value: { type: 'string', value: '???', annotation: undefined, hasAnnotation: false },
-                },
-            ],
-            annotation: undefined,
-            hasAnnotation: true,
-        });
-    });
-
     it('objects (values annotated)', () => {
         const obj = { name: annotate('nvie', 'Vincent'), age: 36 };
         expect(annotate(obj)).toEqual({
             type: 'object',
-            value: [
+            pairs: [
                 {
-                    key: { type: 'string', value: 'name', annotation: undefined, hasAnnotation: false },
+                    key: 'name',
                     value: { type: 'string', value: 'nvie', annotation: 'Vincent', hasAnnotation: true },
                 },
                 {
-                    key: { type: 'string', value: 'age', annotation: undefined, hasAnnotation: false },
+                    key: 'age',
                     value: { type: 'number', value: 36, annotation: undefined, hasAnnotation: false },
                 },
             ],
@@ -178,9 +158,9 @@ describe('parsing (composite)', () => {
         const obj = { name: null };
         expect(annotateField(obj, 'name', 'Missing!')).toEqual({
             type: 'object',
-            value: [
+            pairs: [
                 {
-                    key: { type: 'string', value: 'name', annotation: undefined, hasAnnotation: false },
+                    key: 'name',
                     value: { type: 'null', value: null, annotation: 'Missing!', hasAnnotation: true },
                 },
             ],
@@ -192,9 +172,9 @@ describe('parsing (composite)', () => {
         const obj2 = { name: null };
         expect(annotateField(obj2, 'name', annotate('example', 'An example value'))).toEqual({
             type: 'object',
-            value: [
+            pairs: [
                 {
-                    key: { type: 'string', value: 'name', annotation: undefined, hasAnnotation: false },
+                    key: 'name',
                     value: { type: 'string', value: 'example', annotation: 'An example value', hasAnnotation: true },
                 },
             ],

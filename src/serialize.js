@@ -1,11 +1,11 @@
 // @flow
 
-import type { Annotation, Maybe } from './ast';
+import type { AnnPair, Annotation, Maybe } from './ast';
 import { INDENT, indent, isMultiline } from './utils';
 
-type deliberatelyAny = $FlowFixMe;
+type cast = $FlowFixMe;
 
-function serializeString(s: deliberatelyAny, width: number = 80) {
+function serializeString(s: string, width: number = 80) {
     // Full string
     // Abbreviated to $maxlen i.e. "Vincent Driess..." [truncated]
     let ser = JSON.stringify(s);
@@ -41,7 +41,7 @@ function serializeArray(value: Array<Annotation>, hasAnnotations: boolean, prefi
     return [...iterArray(value, prefix)].join('\n');
 }
 
-function* iterObject(pairs: Array<{ key: Annotation, value: Annotation }>, prefix: string) {
+function* iterObject(pairs: Array<AnnPair>, prefix: string) {
     if (pairs.length === 0) {
         yield '{}';
         return;
@@ -49,9 +49,9 @@ function* iterObject(pairs: Array<{ key: Annotation, value: Annotation }>, prefi
 
     yield '{';
     for (const pair of pairs) {
-        const key: Annotation = pair.key;
+        const key: string = pair.key;
         const value: Annotation = pair.value;
-        const [kser /* , kann */] = serializeAnnotation(key);
+        const kser = serializeValue(key);
 
         const valPrefix = prefix + INDENT + ' '.repeat(kser.length + 2);
         const [vser, vann] = serializeAnnotation(value, prefix + INDENT);
@@ -64,16 +64,11 @@ function* iterObject(pairs: Array<{ key: Annotation, value: Annotation }>, prefi
     yield prefix + '}';
 }
 
-function serializeObject(
-    value: Array<{ key: Annotation, value: Annotation }>,
-    hasAnnotations: boolean,
-    prefix: string
-) {
-    // TODO: Inspect 'hasAnnotations' and decide whether to inline or expand serialize
-    return [...iterObject(value, prefix)].join('\n');
+function serializeObject(pairs: Array<AnnPair>, hasAnnotations: boolean, prefix: string) {
+    return [...iterObject(pairs, prefix)].join('\n');
 }
 
-export function serializeValue(value: deliberatelyAny): string {
+export function serializeValue(value: mixed): string {
     if (typeof value === 'string') {
         return serializeString(value);
     } else if (typeof value === 'number' || typeof value === 'boolean') {
@@ -83,7 +78,7 @@ export function serializeValue(value: deliberatelyAny): string {
     } else if (value === undefined) {
         return 'undefined';
     } else if (typeof value.getMonth === 'function') {
-        return `new Date(${JSON.stringify(value.toString())})`;
+        return `new Date(${JSON.stringify((value: cast).toString())})`;
     }
 
     return '(unserializable)';
@@ -92,13 +87,9 @@ export function serializeValue(value: deliberatelyAny): string {
 export function serializeAnnotation(ann: Annotation, prefix: string = ''): [string, Maybe<string>] {
     let serialized;
     if (ann.type === 'array') {
-        serialized = serializeArray(((ann.value: deliberatelyAny): Array<Annotation>), ann.hasAnnotation, prefix);
+        serialized = serializeArray(ann.items, ann.hasAnnotation, prefix);
     } else if (ann.type === 'object') {
-        serialized = serializeObject(
-            ((ann.value: deliberatelyAny): Array<{ key: Annotation, value: Annotation }>),
-            ann.hasAnnotation,
-            prefix
-        );
+        serialized = serializeObject(ann.pairs, ann.hasAnnotation, prefix);
     } else {
         serialized = serializeValue(ann.value);
     }
