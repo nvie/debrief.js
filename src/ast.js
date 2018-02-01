@@ -2,8 +2,10 @@
 
 export type Maybe<T> = T | void;
 
+type cast = $FlowFixMe;
+
 export type ScalarAnnotation = {
-    type: 'null' | 'undefined' | 'string' | 'number' | 'boolean' | 'date',
+    type: 'ScalarAnnotation',
     value: mixed,
     hasAnnotation: boolean, // TODO: Remove (makes no sense on scalar)
     annotation: Maybe<string>,
@@ -12,14 +14,14 @@ export type ScalarAnnotation = {
 export type AnnPair = { key: string, value: Annotation };
 
 export type ObjectAnnotation = {
-    type: 'object',
+    type: 'ObjectAnnotation',
     pairs: Array<AnnPair>,
     hasAnnotation: boolean,
     annotation: Maybe<string>,
 };
 
 export type ArrayAnnotation = {
-    type: 'array',
+    type: 'ArrayAnnotation',
     items: Array<Annotation>,
     hasAnnotation: boolean,
     annotation: Maybe<string>,
@@ -27,34 +29,19 @@ export type ArrayAnnotation = {
 
 export type Annotation = ObjectAnnotation | ArrayAnnotation | ScalarAnnotation;
 
-export const isObjectAnnotation = (value: mixed): boolean %checks =>
-    value !== null &&
-    typeof value === 'object' &&
-    value.type === 'object' &&
-    Array.isArray(value.pairs) &&
-    typeof value.hasAnnotation === 'boolean';
+export function asAnnotation(thing: mixed): Annotation | void {
+    if (typeof thing === 'object' && thing !== null) {
+        if (thing.type === 'ObjectAnnotation') {
+            return ((thing: cast): ObjectAnnotation);
+        } else if (thing.type === 'ArrayAnnotation') {
+            return ((thing: cast): ArrayAnnotation);
+        } else if (thing.type === 'ScalarAnnotation') {
+            return ((thing: cast): ScalarAnnotation);
+        }
+    }
+    return undefined;
+}
 
-export const isArrayAnnotation = (value: mixed): boolean %checks =>
-    value !== null &&
-    typeof value === 'object' &&
-    value.type === 'array' &&
-    Array.isArray(value.items) &&
-    typeof value.hasAnnotation === 'boolean';
-
-export const isScalarAnnotation = (value: mixed): boolean %checks =>
-    value !== null &&
-    typeof value === 'object' &&
-    isScalarValueType(value.type) &&
-    typeof value.hasAnnotation === 'boolean';
-
-const isScalarValueType = (typeName: mixed): boolean =>
-    typeName === 'string' ||
-    typeName === 'null' ||
-    typeName === 'undefined' ||
-    typeName === 'number' ||
-    typeName === 'boolean' ||
-    typeName === 'date';
-
-export function isAnnotation(value: mixed): boolean %checks {
-    return isObjectAnnotation(value) || isArrayAnnotation(value) || isScalarAnnotation(value);
+export function isAnnotation(thing: mixed): boolean {
+    return asAnnotation(thing) !== undefined;
 }

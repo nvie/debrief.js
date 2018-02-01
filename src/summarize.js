@@ -5,13 +5,13 @@ import type { Annotation } from './ast';
 type Keypath = Array<number | string>;
 
 function* iterSummarize(ann: Annotation, keypath: Keypath = []): Iterable<string> {
-    if (ann.type === 'array') {
+    if (ann.type === 'ArrayAnnotation') {
         const items = ann.items;
         let index = 0;
         for (const ann of items) {
             yield* iterSummarize(ann, [...keypath, index++]);
         }
-    } else if (ann.type === 'object') {
+    } else if (ann.type === 'ObjectAnnotation') {
         const pairs = ann.pairs;
         for (const pair of pairs) {
             yield* iterSummarize(pair.value, [...keypath, pair.key]);

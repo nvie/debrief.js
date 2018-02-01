@@ -4,10 +4,20 @@ import annotate, { annotateField } from '../annotate';
 
 describe('parsing (scalars)', () => {
     it('strings', () => {
-        expect(annotate('foo')).toEqual({ type: 'string', value: 'foo', annotation: undefined, hasAnnotation: false });
-        expect(annotate('foo', '')).toEqual({ type: 'string', value: 'foo', annotation: '', hasAnnotation: true });
+        expect(annotate('foo')).toEqual({
+            type: 'ScalarAnnotation',
+            value: 'foo',
+            annotation: undefined,
+            hasAnnotation: false,
+        });
+        expect(annotate('foo', '')).toEqual({
+            type: 'ScalarAnnotation',
+            value: 'foo',
+            annotation: '',
+            hasAnnotation: true,
+        });
         expect(annotate('foo', 'great')).toEqual({
-            type: 'string',
+            type: 'ScalarAnnotation',
             value: 'foo',
             annotation: 'great',
             hasAnnotation: true,
@@ -15,10 +25,20 @@ describe('parsing (scalars)', () => {
     });
 
     it('booleans', () => {
-        expect(annotate(true)).toEqual({ type: 'boolean', value: true, annotation: undefined, hasAnnotation: false });
-        expect(annotate(true, '')).toEqual({ type: 'boolean', value: true, annotation: '', hasAnnotation: true });
+        expect(annotate(true)).toEqual({
+            type: 'ScalarAnnotation',
+            value: true,
+            annotation: undefined,
+            hasAnnotation: false,
+        });
+        expect(annotate(true, '')).toEqual({
+            type: 'ScalarAnnotation',
+            value: true,
+            annotation: '',
+            hasAnnotation: true,
+        });
         expect(annotate(false, 'lies!')).toEqual({
-            type: 'boolean',
+            type: 'ScalarAnnotation',
             value: false,
             annotation: 'lies!',
             hasAnnotation: true,
@@ -26,10 +46,20 @@ describe('parsing (scalars)', () => {
     });
 
     it('numbers', () => {
-        expect(annotate(123)).toEqual({ type: 'number', value: 123, annotation: undefined, hasAnnotation: false });
-        expect(annotate(234, '')).toEqual({ type: 'number', value: 234, annotation: '', hasAnnotation: true });
+        expect(annotate(123)).toEqual({
+            type: 'ScalarAnnotation',
+            value: 123,
+            annotation: undefined,
+            hasAnnotation: false,
+        });
+        expect(annotate(234, '')).toEqual({
+            type: 'ScalarAnnotation',
+            value: 234,
+            annotation: '',
+            hasAnnotation: true,
+        });
         expect(annotate(314, '100x π')).toEqual({
-            type: 'number',
+            type: 'ScalarAnnotation',
             value: 314,
             annotation: '100x π',
             hasAnnotation: true,
@@ -38,10 +68,20 @@ describe('parsing (scalars)', () => {
 
     it('dates', () => {
         const nyd = new Date(2018, 0, 1);
-        expect(annotate(nyd)).toEqual({ type: 'date', value: nyd, annotation: undefined, hasAnnotation: false });
-        expect(annotate(nyd, '')).toEqual({ type: 'date', value: nyd, annotation: '', hasAnnotation: true });
+        expect(annotate(nyd)).toEqual({
+            type: 'ScalarAnnotation',
+            value: nyd,
+            annotation: undefined,
+            hasAnnotation: false,
+        });
+        expect(annotate(nyd, '')).toEqual({
+            type: 'ScalarAnnotation',
+            value: nyd,
+            annotation: '',
+            hasAnnotation: true,
+        });
         expect(annotate(nyd, "new year's day")).toEqual({
-            type: 'date',
+            type: 'ScalarAnnotation',
             value: nyd,
             annotation: "new year's day",
             hasAnnotation: true,
@@ -49,19 +89,29 @@ describe('parsing (scalars)', () => {
     });
 
     it('null', () => {
-        expect(annotate(null)).toEqual({ type: 'null', value: null, annotation: undefined, hasAnnotation: false });
-        expect(annotate(null, 'foo')).toEqual({ type: 'null', value: null, annotation: 'foo', hasAnnotation: true });
+        expect(annotate(null)).toEqual({
+            type: 'ScalarAnnotation',
+            value: null,
+            annotation: undefined,
+            hasAnnotation: false,
+        });
+        expect(annotate(null, 'foo')).toEqual({
+            type: 'ScalarAnnotation',
+            value: null,
+            annotation: 'foo',
+            hasAnnotation: true,
+        });
     });
 
     it('undefined', () => {
         expect(annotate(undefined)).toEqual({
-            type: 'undefined',
+            type: 'ScalarAnnotation',
             value: undefined,
             annotation: undefined,
             hasAnnotation: false,
         });
         expect(annotate(undefined, 'foo')).toEqual({
-            type: 'undefined',
+            type: 'ScalarAnnotation',
             value: undefined,
             annotation: 'foo',
             hasAnnotation: true,
@@ -73,16 +123,16 @@ describe('parsing (composite)', () => {
     it('arrays', () => {
         const arr1 = [1, 'foo'];
         expect(annotate(arr1)).toEqual({
-            type: 'array',
+            type: 'ArrayAnnotation',
             items: [
                 {
-                    type: 'number',
+                    type: 'ScalarAnnotation',
                     value: 1,
                     annotation: undefined,
                     hasAnnotation: false,
                 },
                 {
-                    type: 'string',
+                    type: 'ScalarAnnotation',
                     value: 'foo',
                     annotation: undefined,
                     hasAnnotation: false,
@@ -94,16 +144,16 @@ describe('parsing (composite)', () => {
 
         const arr2 = [annotate(1, 'uno'), 'foo'];
         expect(annotate(arr2)).toEqual({
-            type: 'array',
+            type: 'ArrayAnnotation',
             items: [
                 {
-                    type: 'number',
+                    type: 'ScalarAnnotation',
                     value: 1,
                     annotation: 'uno',
                     hasAnnotation: true,
                 },
                 {
-                    type: 'string',
+                    type: 'ScalarAnnotation',
                     value: 'foo',
                     annotation: undefined,
                     hasAnnotation: false,
@@ -117,12 +167,12 @@ describe('parsing (composite)', () => {
     it('objects', () => {
         const obj = { name: 'Frank' };
         expect(annotate(obj)).toEqual({
-            type: 'object',
+            type: 'ObjectAnnotation',
             pairs: [
                 {
                     key: 'name',
                     value: {
-                        type: 'string',
+                        type: 'ScalarAnnotation',
                         value: 'Frank',
                         annotation: undefined,
                         hasAnnotation: false,
@@ -137,15 +187,15 @@ describe('parsing (composite)', () => {
     it('objects (values annotated)', () => {
         const obj = { name: annotate('nvie', 'Vincent'), age: 36 };
         expect(annotate(obj)).toEqual({
-            type: 'object',
+            type: 'ObjectAnnotation',
             pairs: [
                 {
                     key: 'name',
-                    value: { type: 'string', value: 'nvie', annotation: 'Vincent', hasAnnotation: true },
+                    value: { type: 'ScalarAnnotation', value: 'nvie', annotation: 'Vincent', hasAnnotation: true },
                 },
                 {
                     key: 'age',
-                    value: { type: 'number', value: 36, annotation: undefined, hasAnnotation: false },
+                    value: { type: 'ScalarAnnotation', value: 36, annotation: undefined, hasAnnotation: false },
                 },
             ],
             annotation: undefined,
@@ -157,11 +207,11 @@ describe('parsing (composite)', () => {
         // Annotate with a simple string
         const obj = { name: null };
         expect(annotateField(obj, 'name', 'Missing!')).toEqual({
-            type: 'object',
+            type: 'ObjectAnnotation',
             pairs: [
                 {
                     key: 'name',
-                    value: { type: 'null', value: null, annotation: 'Missing!', hasAnnotation: true },
+                    value: { type: 'ScalarAnnotation', value: null, annotation: 'Missing!', hasAnnotation: true },
                 },
             ],
             annotation: undefined,
@@ -171,11 +221,16 @@ describe('parsing (composite)', () => {
         // Annotate with a full annotation object (able to change the annotate value itself)
         const obj2 = { name: null };
         expect(annotateField(obj2, 'name', annotate('example', 'An example value'))).toEqual({
-            type: 'object',
+            type: 'ObjectAnnotation',
             pairs: [
                 {
                     key: 'name',
-                    value: { type: 'string', value: 'example', annotation: 'An example value', hasAnnotation: true },
+                    value: {
+                        type: 'ScalarAnnotation',
+                        value: 'example',
+                        annotation: 'An example value',
+                        hasAnnotation: true,
+                    },
                 },
             ],
             annotation: undefined,
@@ -187,7 +242,7 @@ describe('parsing (composite)', () => {
 describe('parsing is idempotent', () => {
     it('parsing an annotation returns itself', () => {
         const value = 'foo';
-        const expected = { type: 'string', value: 'foo', annotation: undefined, hasAnnotation: false };
+        const expected = { type: 'ScalarAnnotation', value: 'foo', annotation: undefined, hasAnnotation: false };
 
         expect(annotate(value)).toEqual(expected);
         expect(annotate(annotate(value))).toEqual(expected);

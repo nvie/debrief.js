@@ -6,6 +6,8 @@ v0.2.0
 
 **New features:**
 
+- Reworked the internal Annotation data structures to be more robust and
+  type-safe
 - Add new serializers optimized for web/JSON output.
   * For full inline annotated objects, use `serialize()`
   * For less verbose output (a list of errors and their locations, not the

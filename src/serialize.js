@@ -3,8 +3,6 @@
 import type { AnnPair, Annotation, Maybe } from './ast';
 import { INDENT, indent, isMultiline } from './utils';
 
-type cast = $FlowFixMe;
-
 function serializeString(s: string, width: number = 80) {
     // Full string
     // Abbreviated to $maxlen i.e. "Vincent Driess..." [truncated]
@@ -77,8 +75,8 @@ export function serializeValue(value: mixed): string {
         return 'null';
     } else if (value === undefined) {
         return 'undefined';
-    } else if (typeof value.getMonth === 'function') {
-        return `new Date(${JSON.stringify((value: cast).toString())})`;
+    } else if (value instanceof Date) {
+        return `new Date(${JSON.stringify(value.toString())})`;
     }
 
     return '(unserializable)';
@@ -86,9 +84,9 @@ export function serializeValue(value: mixed): string {
 
 export function serializeAnnotation(ann: Annotation, prefix: string = ''): [string, Maybe<string>] {
     let serialized;
-    if (ann.type === 'array') {
+    if (ann.type === 'ArrayAnnotation') {
         serialized = serializeArray(ann.items, ann.hasAnnotation, prefix);
-    } else if (ann.type === 'object') {
+    } else if (ann.type === 'ObjectAnnotation') {
         serialized = serializeObject(ann.pairs, ann.hasAnnotation, prefix);
     } else {
         serialized = serializeValue(ann.value);
