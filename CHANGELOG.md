@@ -1,3 +1,7 @@
+v0.2.1
+------
+- Declare library to be side effect free (to help optimize webpack v4 builds)
+
 v0.2.0
 ------
 **Breaking changes:** 
