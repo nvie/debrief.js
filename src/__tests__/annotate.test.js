@@ -219,7 +219,7 @@ describe('parsing (composite)', () => {
         });
     });
 
-    it('objects (via annotateField helper)', () => {
+    it('annotates fields in object', () => {
         // Annotate with a simple string
         const obj = { name: null };
         expect(annotateField(obj, 'name', 'Missing!')).toEqual({
@@ -256,6 +256,31 @@ describe('parsing (composite)', () => {
                         annotation: undefined,
                         hasAnnotation: false,
                     },
+                },
+            ],
+            annotation: undefined,
+            hasAnnotation: true,
+        });
+    });
+
+    it('annotates missing fields in object', () => {
+        // Annotate with a simple string
+        const obj = { foo: 'hello' };
+        expect(annotateField(obj, 'bar', 'Missing')).toEqual({
+            type: 'ObjectAnnotation',
+            pairs: [
+                {
+                    key: 'foo',
+                    value: {
+                        type: 'ScalarAnnotation',
+                        value: 'hello',
+                        hasAnnotation: false,
+                        annotation: undefined,
+                    },
+                },
+                {
+                    key: 'bar',
+                    value: { type: 'ScalarAnnotation', value: undefined, annotation: 'Missing', hasAnnotation: true },
                 },
             ],
             annotation: undefined,

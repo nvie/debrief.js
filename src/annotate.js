@@ -18,7 +18,19 @@ export function annotateFields(
     object: { [string]: mixed },
     fields: Array<[/* key */ string, string | Annotation]>
 ): ObjectAnnotation {
+    // Convert the object to a list of pairs
     let pairs = Object.entries(object);
+
+    // If we want to annotate keys that are missing in the object, add an
+    // explicit "undefined" value for those now, so we have a place in the
+    // object to annotate
+    const existingKeys = new Set(Object.keys(object));
+    for (const [field] of fields) {
+        if (!existingKeys.has(field)) {
+            pairs.push([field, undefined]);
+        }
+    }
+
     for (const [field, ann] of fields) {
         // prettier-ignore
         pairs = pairs.map(([k, v]) => (
