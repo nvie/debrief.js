@@ -1,3 +1,7 @@
+v0.2.2
+------
+- Fix bug where annotateField() did not work on missing keys
+
 v0.2.1
 ------
 - Declare library to be side effect free (to help optimize webpack v4 builds)
