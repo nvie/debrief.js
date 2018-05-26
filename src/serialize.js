@@ -12,8 +12,8 @@ function serializeString(s: string, width: number = 80) {
     }
 
     // Cut off a bit
-    s = s.substring(0, width - 15) + '...';
-    ser = JSON.stringify(s) + ' [truncated]';
+    const truncated = s.substring(0, width - 15) + '...';
+    ser = JSON.stringify(truncated) + ' [truncated]';
     return ser;
 }
 
