@@ -1,3 +1,9 @@
+v0.2.3
+------
+- Update dependencies
+- Behave better in projects that have Flow's `experimental.const_params`
+  setting turned on
+
 v0.2.2
 ------
 - Fix bug where annotateField() did not work on missing keys
