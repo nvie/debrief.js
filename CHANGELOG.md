@@ -1,3 +1,8 @@
+v1.0.0
+------
+- Make debrief.js fully [Flow Strict](https://flow.org/en/docs/strict/)
+- Bump to 1.0.0 to indicate stability
+
 v0.2.3
 ------
 - Update dependencies
