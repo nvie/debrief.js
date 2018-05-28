@@ -1,4 +1,4 @@
-// @flow
+// @flow strict
 
 import type { AnnPair, Annotation, Maybe } from './ast';
 import { INDENT, indent, isMultiline } from './utils';

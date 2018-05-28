@@ -1,4 +1,4 @@
-// @flow
+// @flow strict
 
 import annotate from '../annotate';
 import summarize from '../summarize';

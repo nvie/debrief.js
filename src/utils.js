@@ -1,4 +1,4 @@
-// @flow
+// @flow strict
 
 // Two spaces of indentation
 export const INDENT = '  ';

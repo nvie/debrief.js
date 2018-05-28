@@ -1,4 +1,4 @@
-// @flow
+// @flow strict
 
 const whitespace_re = /^\s*$/;
 

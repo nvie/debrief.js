@@ -1,4 +1,4 @@
-// @flow
+// @flow strict
 
 import { asAnnotation } from './ast';
 import type { Annotation, Maybe, ObjectAnnotation } from './ast';

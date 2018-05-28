@@ -1,4 +1,4 @@
-// @flow
+// @flow strict
 
 import annotate, { annotateField } from '../annotate';
 import { isAnnotation } from '../ast';
