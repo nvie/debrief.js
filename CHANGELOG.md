@@ -1,3 +1,7 @@
+v1.1.0
+------
+- Drop support for Node 7
+
 v1.0.0
 ------
 - Make debrief.js fully [Flow Strict](https://flow.org/en/docs/strict/)
