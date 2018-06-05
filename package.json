@@ -1,6 +1,6 @@
 {
   "name": "debrief",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Object serialization and annotation, for use in human-friendly error messages",
   "main": "lib/index.js",
   "files": [
