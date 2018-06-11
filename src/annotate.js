@@ -3,6 +3,17 @@
 import { asAnnotation } from './ast';
 import type { Annotation, Maybe, ObjectAnnotation } from './ast';
 
+// Taken from https://github.com/nvie/itertools.js#any and inlined here to
+// avoid a dependency on itertools just for this function
+export function any<T>(iterable: Iterable<T>, keyFn: T => boolean): boolean {
+    for (let item of iterable) {
+        if (keyFn(item)) {
+            return true;
+        }
+    }
+    return false;
+}
+
 export function annotateFields(
     object: { [string]: mixed },
     fields: Array<[/* key */ string, string | Annotation]>
@@ -42,10 +53,13 @@ export function annotatePairs(value: Array<[string, mixed]>, annotation: Maybe<s
     const pairs = value.map(([key, v]) => {
         return { key, value: annotate(v) };
     });
-    return { type: 'ObjectAnnotation', pairs, annotation };
+    const hasAnnotation = any(pairs, pair => pair.value.hasAnnotation);
+    return { type: 'ObjectAnnotation', pairs, hasAnnotation, annotation };
 }
 
 export default function annotate(value: mixed, annotation: Maybe<string>): Annotation {
+    let hasAnnotation = annotation !== undefined;
+
     if (
         value === null ||
         value === undefined ||
@@ -54,22 +68,23 @@ export default function annotate(value: mixed, annotation: Maybe<string>): Annot
         typeof value === 'boolean' ||
         typeof value.getMonth === 'function'
     ) {
-        return { type: 'ScalarAnnotation', value, annotation };
+        return { type: 'ScalarAnnotation', value, hasAnnotation, annotation };
     } else {
         const ann = asAnnotation(value);
         if (ann) {
             if (annotation === undefined) {
                 return ann;
             } else if (ann.type === 'ObjectAnnotation') {
-                return { type: 'ObjectAnnotation', pairs: ann.pairs, annotation };
+                return { type: 'ObjectAnnotation', pairs: ann.pairs, annotation, hasAnnotation };
             } else if (ann.type === 'ArrayAnnotation') {
-                return { type: 'ArrayAnnotation', items: ann.items, annotation };
+                return { type: 'ArrayAnnotation', items: ann.items, annotation, hasAnnotation };
             } else {
-                return { type: 'ScalarAnnotation', value: ann.value, annotation };
+                return { type: 'ScalarAnnotation', value: ann.value, annotation, hasAnnotation };
             }
         } else if (Array.isArray(value)) {
             const items = value.map(v => annotate(v));
-            return { type: 'ArrayAnnotation', items, annotation };
+            hasAnnotation = any(items, ann => ann.hasAnnotation);
+            return { type: 'ArrayAnnotation', items, hasAnnotation, annotation };
         } else {
             /* typeof value === 'object' */
             return annotatePairs(Object.entries(value), annotation);
