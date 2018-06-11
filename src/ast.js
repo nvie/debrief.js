@@ -7,7 +7,6 @@ type cast = $FlowFixMe;
 export type ScalarAnnotation = {
     type: 'ScalarAnnotation',
     value: mixed,
-    hasAnnotation: boolean, // TODO: Remove (makes no sense on scalar)
     annotation: Maybe<string>,
 };
 
@@ -16,14 +15,12 @@ export type AnnPair = { key: string, value: Annotation };
 export type ObjectAnnotation = {
     type: 'ObjectAnnotation',
     pairs: Array<AnnPair>,
-    hasAnnotation: boolean,
     annotation: Maybe<string>,
 };
 
 export type ArrayAnnotation = {
     type: 'ArrayAnnotation',
     items: Array<Annotation>,
-    hasAnnotation: boolean,
     annotation: Maybe<string>,
 };
 
