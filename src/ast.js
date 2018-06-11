@@ -3,12 +3,13 @@
 export type Maybe<T> = T | void;
 
 type cast = $FlowFixMe;
+type Metadata = { +[string]: mixed };
 
 export type ScalarAnnotation = {
     type: 'ScalarAnnotation',
     value: mixed,
-    hasAnnotation: boolean, // TODO: Remove (makes no sense on scalar)
     annotation: Maybe<string>,
+    metadata: Maybe<Metadata>,
 };
 
 export type AnnPair = { key: string, value: Annotation };
@@ -16,15 +17,15 @@ export type AnnPair = { key: string, value: Annotation };
 export type ObjectAnnotation = {
     type: 'ObjectAnnotation',
     pairs: Array<AnnPair>,
-    hasAnnotation: boolean,
     annotation: Maybe<string>,
+    metadata: Maybe<Metadata>,
 };
 
 export type ArrayAnnotation = {
     type: 'ArrayAnnotation',
     items: Array<Annotation>,
-    hasAnnotation: boolean,
     annotation: Maybe<string>,
+    metadata: Maybe<Metadata>,
 };
 
 export type Annotation = ObjectAnnotation | ArrayAnnotation | ScalarAnnotation;

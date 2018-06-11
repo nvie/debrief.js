@@ -24,19 +24,19 @@ describe('parsing (scalars)', () => {
             type: 'ScalarAnnotation',
             value: 'foo',
             annotation: undefined,
-            hasAnnotation: false,
+            metadata: undefined,
         });
         expect(annotate('foo', '')).toEqual({
             type: 'ScalarAnnotation',
             value: 'foo',
             annotation: '',
-            hasAnnotation: true,
+            metadata: undefined,
         });
         expect(annotate('foo', 'great')).toEqual({
             type: 'ScalarAnnotation',
             value: 'foo',
             annotation: 'great',
-            hasAnnotation: true,
+            metadata: undefined,
         });
     });
 
@@ -45,19 +45,19 @@ describe('parsing (scalars)', () => {
             type: 'ScalarAnnotation',
             value: true,
             annotation: undefined,
-            hasAnnotation: false,
+            metadata: undefined,
         });
         expect(annotate(true, '')).toEqual({
             type: 'ScalarAnnotation',
             value: true,
             annotation: '',
-            hasAnnotation: true,
+            metadata: undefined,
         });
         expect(annotate(false, 'lies!')).toEqual({
             type: 'ScalarAnnotation',
             value: false,
             annotation: 'lies!',
-            hasAnnotation: true,
+            metadata: undefined,
         });
     });
 
@@ -66,19 +66,19 @@ describe('parsing (scalars)', () => {
             type: 'ScalarAnnotation',
             value: 123,
             annotation: undefined,
-            hasAnnotation: false,
+            metadata: undefined,
         });
         expect(annotate(234, '')).toEqual({
             type: 'ScalarAnnotation',
             value: 234,
             annotation: '',
-            hasAnnotation: true,
+            metadata: undefined,
         });
         expect(annotate(314, '100x π')).toEqual({
             type: 'ScalarAnnotation',
             value: 314,
             annotation: '100x π',
-            hasAnnotation: true,
+            metadata: undefined,
         });
     });
 
@@ -88,19 +88,19 @@ describe('parsing (scalars)', () => {
             type: 'ScalarAnnotation',
             value: nyd,
             annotation: undefined,
-            hasAnnotation: false,
+            metadata: undefined,
         });
         expect(annotate(nyd, '')).toEqual({
             type: 'ScalarAnnotation',
             value: nyd,
             annotation: '',
-            hasAnnotation: true,
+            metadata: undefined,
         });
         expect(annotate(nyd, "new year's day")).toEqual({
             type: 'ScalarAnnotation',
             value: nyd,
             annotation: "new year's day",
-            hasAnnotation: true,
+            metadata: undefined,
         });
     });
 
@@ -109,13 +109,13 @@ describe('parsing (scalars)', () => {
             type: 'ScalarAnnotation',
             value: null,
             annotation: undefined,
-            hasAnnotation: false,
+            metadata: undefined,
         });
         expect(annotate(null, 'foo')).toEqual({
             type: 'ScalarAnnotation',
             value: null,
             annotation: 'foo',
-            hasAnnotation: true,
+            metadata: undefined,
         });
     });
 
@@ -124,13 +124,13 @@ describe('parsing (scalars)', () => {
             type: 'ScalarAnnotation',
             value: undefined,
             annotation: undefined,
-            hasAnnotation: false,
+            metadata: undefined,
         });
         expect(annotate(undefined, 'foo')).toEqual({
             type: 'ScalarAnnotation',
             value: undefined,
             annotation: 'foo',
-            hasAnnotation: true,
+            metadata: undefined,
         });
     });
 });
@@ -145,17 +145,17 @@ describe('parsing (composite)', () => {
                     type: 'ScalarAnnotation',
                     value: 1,
                     annotation: undefined,
-                    hasAnnotation: false,
+                    metadata: undefined,
                 },
                 {
                     type: 'ScalarAnnotation',
                     value: 'foo',
                     annotation: undefined,
-                    hasAnnotation: false,
+                    metadata: undefined,
                 },
             ],
             annotation: undefined,
-            hasAnnotation: false,
+            metadata: undefined,
         });
 
         const arr2 = [annotate(1, 'uno'), 'foo'];
@@ -166,17 +166,17 @@ describe('parsing (composite)', () => {
                     type: 'ScalarAnnotation',
                     value: 1,
                     annotation: 'uno',
-                    hasAnnotation: true,
+                    metadata: undefined,
                 },
                 {
                     type: 'ScalarAnnotation',
                     value: 'foo',
                     annotation: undefined,
-                    hasAnnotation: false,
+                    metadata: undefined,
                 },
             ],
             annotation: undefined,
-            hasAnnotation: true,
+            metadata: undefined,
         });
     });
 
@@ -191,12 +191,12 @@ describe('parsing (composite)', () => {
                         type: 'ScalarAnnotation',
                         value: 'Frank',
                         annotation: undefined,
-                        hasAnnotation: false,
+                        metadata: undefined,
                     },
                 },
             ],
             annotation: undefined,
-            hasAnnotation: false,
+            metadata: undefined,
         });
     });
 
@@ -207,11 +207,21 @@ describe('parsing (composite)', () => {
             pairs: [
                 {
                     key: 'name',
-                    value: { type: 'ScalarAnnotation', value: 'nvie', annotation: 'Vincent', hasAnnotation: true },
+                    value: {
+                        type: 'ScalarAnnotation',
+                        value: 'nvie',
+                        annotation: 'Vincent',
+                        metadata: undefined,
+                    },
                 },
                 {
                     key: 'age',
-                    value: { type: 'ScalarAnnotation', value: 36, annotation: undefined, hasAnnotation: false },
+                    value: {
+                        type: 'ScalarAnnotation',
+                        value: 36,
+                        annotation: undefined,
+                        metadata: undefined,
+                    },
                 },
             ],
             annotation: undefined,
@@ -227,11 +237,15 @@ describe('parsing (composite)', () => {
             pairs: [
                 {
                     key: 'name',
-                    value: { type: 'ScalarAnnotation', value: null, annotation: 'Missing!', hasAnnotation: true },
+                    value: {
+                        type: 'ScalarAnnotation',
+                        value: null,
+                        annotation: 'Missing!',
+                        metadata: undefined,
+                    },
                 },
             ],
             annotation: undefined,
-            hasAnnotation: true,
         });
 
         // Annotate with a full annotation object (able to change the annotate value itself)
@@ -245,7 +259,7 @@ describe('parsing (composite)', () => {
                         type: 'ScalarAnnotation',
                         value: 'example',
                         annotation: 'An example value',
-                        hasAnnotation: true,
+                        metadata: undefined,
                     },
                 },
                 {
@@ -254,12 +268,12 @@ describe('parsing (composite)', () => {
                         type: 'ScalarAnnotation',
                         value: 20,
                         annotation: undefined,
-                        hasAnnotation: false,
+                        metadata: undefined,
                     },
                 },
             ],
             annotation: undefined,
-            hasAnnotation: true,
+            metadata: undefined,
         });
     });
 
@@ -274,17 +288,22 @@ describe('parsing (composite)', () => {
                     value: {
                         type: 'ScalarAnnotation',
                         value: 'hello',
-                        hasAnnotation: false,
                         annotation: undefined,
+                        metadata: undefined,
                     },
                 },
                 {
                     key: 'bar',
-                    value: { type: 'ScalarAnnotation', value: undefined, annotation: 'Missing', hasAnnotation: true },
+                    value: {
+                        type: 'ScalarAnnotation',
+                        value: undefined,
+                        annotation: 'Missing',
+                        metadata: undefined,
+                    },
                 },
             ],
             annotation: undefined,
-            hasAnnotation: true,
+            metadata: undefined,
         });
     });
 });
