@@ -8,23 +8,25 @@ type Keypath = Array<number | string>;
  * Walks the annotation tree and emits the annotation's key path within the
  * object tree, and the message as a series of messages (array of strings).
  */
-function* iterSummarize(ann: Annotation, keypath: Keypath): Iterable<string> {
+export default function summarize(ann: Annotation, keypath: Keypath = []): Array<string> {
+    const result: Array<string> = [];
+
     if (ann.type === 'ArrayAnnotation') {
         const items = ann.items;
         let index = 0;
         for (const ann of items) {
-            yield* iterSummarize(ann, [...keypath, index++]);
+            result.push(...summarize(ann, [...keypath, index++]));
         }
     } else if (ann.type === 'ObjectAnnotation') {
         const pairs = ann.pairs;
         for (const pair of pairs) {
-            yield* iterSummarize(pair.value, [...keypath, pair.key]);
+            result.push(...summarize(pair.value, [...keypath, pair.key]));
         }
     }
 
     const annotation = ann.annotation;
     if (!annotation) {
-        return;
+        return result;
     }
 
     let prefix: string;
@@ -38,13 +40,5 @@ function* iterSummarize(ann: Annotation, keypath: Keypath): Iterable<string> {
     } else {
         prefix = `Value at keypath ${keypath.map(x => x.toString()).join('.')}: `;
     }
-    yield `${prefix}${annotation}`;
-}
-
-/**
- * Walks the annotation tree and emits the annotation's key path within the
- * object tree, and the message as a series of messages (array of strings).
- */
-export default function summarize(ann: Annotation, keypath: Keypath = []): Array<string> {
-    return [...iterSummarize(ann, keypath)];
+    return [...result, `${prefix}${annotation}`];
 }

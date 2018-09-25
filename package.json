@@ -61,9 +61,7 @@
     "prettier": "^1.13.7",
     "rimraf": "^2.6.2"
   },
-  "dependencies": {
-    "babel-runtime": "^6.26.0"
-  },
+  "dependencies": {},
   "jest": {
     "testPathIgnorePatterns": [
       "node_modules",

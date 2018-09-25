@@ -1,3 +1,7 @@
+v1.2.1
+------
+- Drop dependency on babel-runtime to reduce bundle size
+
 v1.2.0
 ------
 - Add TypeScript support

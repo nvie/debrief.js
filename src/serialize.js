@@ -17,35 +17,29 @@ function serializeString(s: string, width: number = 80) {
     return ser;
 }
 
-function* iterArray(arr: Array<Annotation>, prefix: string) {
-    if (arr.length === 0) {
-        yield '[]';
-        return;
-    }
-
-    yield '[';
-    for (const item of arr) {
-        const [ser, ann] = serializeAnnotation(item, prefix + INDENT);
-        yield prefix + INDENT + ser + ',';
-        if (ann !== undefined) {
-            yield indent(ann, prefix + INDENT);
-        }
-    }
-    yield prefix + ']';
-}
-
 function serializeArray(value: Array<Annotation>, hasAnnotations: boolean, prefix: string) {
     // TODO: Inspect 'hasAnnotations' and decide whether to inline or expand serialize
-    return [...iterArray(value, prefix)].join('\n');
-}
-
-function* iterObject(pairs: Array<AnnPair>, prefix: string) {
-    if (pairs.length === 0) {
-        yield '{}';
-        return;
+    if (value.length === 0) {
+        return '[]';
     }
 
-    yield '{';
+    const result = [];
+    for (const item of value) {
+        const [ser, ann] = serializeAnnotation(item, prefix + INDENT);
+        result.push(prefix + INDENT + ser + ',');
+        if (ann !== undefined) {
+            result.push(indent(ann, prefix + INDENT));
+        }
+    }
+    return ['[', ...result, prefix + ']'].join('\n');
+}
+
+function serializeObject(pairs: Array<AnnPair>, hasAnnotations: boolean, prefix: string) {
+    if (pairs.length === 0) {
+        return '{}';
+    }
+
+    const result = [];
     for (const pair of pairs) {
         const key: string = pair.key;
         const value: Annotation = pair.value;
@@ -54,16 +48,12 @@ function* iterObject(pairs: Array<AnnPair>, prefix: string) {
         const valPrefix = prefix + INDENT + ' '.repeat(kser.length + 2);
         const [vser, vann] = serializeAnnotation(value, prefix + INDENT);
 
-        yield prefix + INDENT + kser + ': ' + vser + ',';
+        result.push(prefix + INDENT + kser + ': ' + vser + ',');
         if (vann !== undefined) {
-            yield indent(vann, valPrefix);
+            result.push(indent(vann, valPrefix));
         }
     }
-    yield prefix + '}';
-}
-
-function serializeObject(pairs: Array<AnnPair>, hasAnnotations: boolean, prefix: string) {
-    return [...iterObject(pairs, prefix)].join('\n');
+    return ['{', ...result, prefix + '}'].join('\n');
 }
 
 export function serializeValue(value: mixed): string {
