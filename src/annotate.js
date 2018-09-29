@@ -3,17 +3,6 @@
 import { asAnnotation } from './ast';
 import type { Annotation, Maybe, ObjectAnnotation } from './ast';
 
-// Taken from https://github.com/nvie/itertools.js#any and inlined here to
-// avoid a dependency on itertools just for this function
-export function any<T>(iterable: Iterable<T>, keyFn: T => boolean): boolean {
-    for (let item of iterable) {
-        if (keyFn(item)) {
-            return true;
-        }
-    }
-    return false;
-}
-
 export function annotateFields(
     object: { [string]: mixed },
     fields: Array<[/* key */ string, string | Annotation]>
@@ -53,7 +42,7 @@ export function annotatePairs(value: Array<[string, mixed]>, annotation: Maybe<s
     const pairs = value.map(([key, v]) => {
         return { key, value: annotate(v) };
     });
-    const hasAnnotation = any(pairs, pair => pair.value.hasAnnotation);
+    const hasAnnotation = pairs.some(pair => pair.value.hasAnnotation);
     return { type: 'ObjectAnnotation', pairs, hasAnnotation, annotation };
 }
 
@@ -83,7 +72,7 @@ export default function annotate(value: mixed, annotation: Maybe<string>): Annot
             }
         } else if (Array.isArray(value)) {
             const items = value.map(v => annotate(v));
-            hasAnnotation = any(items, ann => ann.hasAnnotation);
+            hasAnnotation = items.some(ann => ann.hasAnnotation);
             return { type: 'ArrayAnnotation', items, hasAnnotation, annotation };
         } else {
             /* typeof value === 'object' */

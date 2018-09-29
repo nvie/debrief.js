@@ -1,3 +1,7 @@
+v1.2.2
+------
+- Don't expose private helper function (fixes a TypeScript bug)
+
 v1.2.1
 ------
 - Drop dependency on babel-runtime to reduce bundle size
