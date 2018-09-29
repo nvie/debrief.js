@@ -1,6 +1,5 @@
 import { asAnnotation, Annotation, Maybe, ObjectAnnotation } from './ast';
 
-export function any<T>(iterable: Iterable<T>, keyFn: (item: T) => boolean): boolean;
 export function annotateFields(
     object: { [fied: string]: unknown },
     fields: Array<[string, string | Annotation]>
