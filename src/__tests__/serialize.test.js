@@ -55,6 +55,13 @@ describe('serialize', () => {
             `
         );
         debrief(
+            annotate(new Date('not a date'), 'Nope'),
+            `
+              (Invalid Date)
+              ^^^^^^^^^^^^^^ Nope
+            `
+        );
+        debrief(
             annotate([], 'must not be empty'),
             `
               []

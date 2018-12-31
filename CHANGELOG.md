@@ -1,3 +1,8 @@
+v1.2.3
+------
+- Fix bug where invalid dates were not accurately serialized
+  (e.g. new Date('not a date'))
+
 v1.2.2
 ------
 - Don't expose private helper function (fixes a TypeScript bug)

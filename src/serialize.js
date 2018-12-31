@@ -1,7 +1,7 @@
 // @flow strict
 
 import type { AnnPair, Annotation, Maybe } from './ast';
-import { INDENT, indent, isMultiline } from './utils';
+import { INDENT, asDate, indent, isMultiline } from './utils';
 
 function serializeString(s: string, width: number = 80) {
     // Full string
@@ -66,10 +66,18 @@ export function serializeValue(value: mixed): string {
         return 'null';
     } else if (value === undefined) {
         return 'undefined';
-    } else if (value instanceof Date) {
-        return `new Date(${JSON.stringify(value.toISOString())})`;
     } else {
-        return '(unserializable)';
+        const valueAsDate = asDate(value);
+        if (valueAsDate !== null) {
+            return `new Date(${JSON.stringify(valueAsDate.toISOString())})`;
+        } else if (value instanceof Date) {
+            // NOTE: Using `instanceof Date` is unreliable way of checking dates.
+            // If this case occurs (and it didn't pass the prior isDate())
+            // check, then this must be the case where it's an invalid date.
+            return '(Invalid Date)';
+        } else {
+            return '(unserializable)';
+        }
     }
 }
 
