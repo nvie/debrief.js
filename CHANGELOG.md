@@ -1,3 +1,7 @@
+v1.2.4
+------
+- Minor: make Flow lint overrides less intrusive
+
 v1.2.3
 ------
 - Fix bug where invalid dates were not accurately serialized

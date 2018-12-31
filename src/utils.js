@@ -14,11 +14,7 @@ export const INDENT = '  ';
  * Taken from https://stackoverflow.com/a/44198641
  */
 const isDate = (value: mixed): boolean =>
-    // flowlint sketchy-null-mixed:off
-    // prettier-ignore
-    !!value
-        && Object.prototype.toString.call(value) === '[object Date]'
-        && !isNaN(value);
+    !!value && Object.prototype.toString.call(value) === '[object Date]' && !isNaN(value);
 
 /**
  * Is value is a valid Date instance, then return that.  If not, then return

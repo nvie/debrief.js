@@ -10,6 +10,7 @@ all=error
 sketchy-null-bool=off
 sketchy-null-number=off
 sketchy-null-string=off
+sketchy-null-mixed=off
 
 [options]
 include_warnings=true
