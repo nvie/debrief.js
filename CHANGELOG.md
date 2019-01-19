@@ -1,3 +1,8 @@
+v1.2.5
+------
+- New build system
+- Cleaner package output
+
 v1.2.4
 ------
 - Minor: make Flow lint overrides less intrusive
