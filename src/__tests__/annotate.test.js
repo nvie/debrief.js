@@ -303,3 +303,60 @@ describe('parsing is idempotent', () => {
         }
     });
 });
+
+describe('annotating circular objects', () => {
+    it('circular arrays', () => {
+        var circularArray = ['foo', circularArray];
+        expect(annotate(circularArray)).toEqual({
+            type: 'ArrayAnnotation',
+            hasAnnotation: false,
+            annotation: undefined,
+            items: [
+                {
+                    type: 'ScalarAnnotation',
+                    value: 'foo',
+                    hasAnnotation: false,
+                    annotation: undefined,
+                },
+                {
+                    type: 'ScalarAnnotation',
+                    value: '[circular]',
+                    hasAnnotation: false,
+                    annotation: undefined,
+                },
+            ],
+        });
+    });
+
+    // xit('circular objects', () => {
+    //     var circularObject = {
+    //         foo: 'foo',
+    //         bar: circularObject
+    //     };
+    //     expect(annotateField(obj2, 'name', annotate('example', 'An example value'))).toEqual({
+    //         type: 'ObjectAnnotation',
+    //         pairs: [
+    //             {
+    //                 key: 'name',
+    //                 value: {
+    //                     type: 'ScalarAnnotation',
+    //                     value: 'example',
+    //                     annotation: 'An example value',
+    //                     hasAnnotation: true,
+    //                 },
+    //             },
+    //             {
+    //                 key: 'age',
+    //                 value: {
+    //                     type: 'ScalarAnnotation',
+    //                     value: 20,
+    //                     annotation: undefined,
+    //                     hasAnnotation: false,
+    //                 },
+    //             },
+    //         ],
+    //         annotation: undefined,
+    //         hasAnnotation: true,
+    //     });
+    // })
+});
