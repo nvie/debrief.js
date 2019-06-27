@@ -1,3 +1,7 @@
+v1.2.6
+------
+- Fix minor implementation detail that caused Flow issues since 0.101.1
+
 v1.2.5
 ------
 - New build system
