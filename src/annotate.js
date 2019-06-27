@@ -60,6 +60,7 @@ export default function annotate(value: mixed, annotation: Maybe<string>): Annot
         return { type: 'ScalarAnnotation', value, hasAnnotation, annotation };
     } else {
         const ann = asAnnotation(value);
+        // istanbul ignore else
         if (ann) {
             if (annotation === undefined) {
                 return ann;
