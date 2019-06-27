@@ -74,9 +74,10 @@ export default function annotate(value: mixed, annotation: Maybe<string>): Annot
             const items = value.map(v => annotate(v));
             hasAnnotation = items.some(ann => ann.hasAnnotation);
             return { type: 'ArrayAnnotation', items, hasAnnotation, annotation };
-        } else {
-            /* typeof value === 'object' */
+        } else if (typeof value === 'object') {
             return annotatePairs(Object.entries(value), annotation);
+        } else {
+            throw new Error('Unknown annotation');
         }
     }
 }
