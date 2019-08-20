@@ -5,7 +5,7 @@ import type { Annotation, Maybe, ObjectAnnotation } from './ast';
 
 export function annotateFields(
     object: { [string]: mixed },
-    fields: Array<[/* key */ string, string | Annotation]>
+    fields: Array<[/* key */ string, string | Annotation]>,
 ): ObjectAnnotation {
     // Convert the object to a list of pairs
     let pairs = Object.entries(object);
@@ -77,6 +77,8 @@ export default function annotate(value: mixed, annotation: Maybe<string>): Annot
             return { type: 'ArrayAnnotation', items, hasAnnotation, annotation };
         } else if (typeof value === 'object') {
             return annotatePairs(Object.entries(value), annotation);
+        } else if (typeof value === 'function') {
+            return { type: 'ScalarAnnotation', value, hasAnnotation: false, annotation };
         } else {
             throw new Error('Unknown annotation');
         }
