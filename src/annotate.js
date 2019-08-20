@@ -5,7 +5,7 @@ import type { Annotation, Maybe, ObjectAnnotation } from './ast';
 
 export function annotateFields(
     object: { [string]: mixed },
-    fields: Array<[/* key */ string, string | Annotation]>,
+    fields: Array<[/* key */ string, string | Annotation]>
 ): ObjectAnnotation {
     // Convert the object to a list of pairs
     let pairs = Object.entries(object);
