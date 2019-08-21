@@ -291,7 +291,7 @@ describe('parsing (composite)', () => {
 
 describe('parsing is idempotent', () => {
     it('parsing an annotation returns itself', () => {
-        for (const value of ['a string', 42, [], {}]) {
+        for (const value of ['a string', 42, [], {}, function() {}]) {
             // Annotated once yields an Annotation, but annotating it more often
             // has no effect on the result
             const once = annotate(value);

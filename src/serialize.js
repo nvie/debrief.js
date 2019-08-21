@@ -87,6 +87,8 @@ export function serializeAnnotation(ann: Annotation, prefix: string = ''): [stri
         serialized = serializeArray(ann.items, ann.hasAnnotation, prefix);
     } else if (ann.type === 'ObjectAnnotation') {
         serialized = serializeObject(ann.pairs, ann.hasAnnotation, prefix);
+    } else if (ann.type === 'FunctionAnnotation') {
+        serialized = 'function() {}';
     } else {
         serialized = serializeValue(ann.value);
     }

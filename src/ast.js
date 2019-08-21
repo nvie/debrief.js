@@ -11,6 +11,12 @@ export type ScalarAnnotation = {
     annotation: Maybe<string>,
 };
 
+export type FunctionAnnotation = {
+    type: 'FunctionAnnotation',
+    hasAnnotation: boolean, // TODO: Remove (makes no sense on functions)
+    annotation: Maybe<string>,
+};
+
 export type AnnPair = { key: string, value: Annotation };
 
 export type ObjectAnnotation = {
@@ -27,7 +33,8 @@ export type ArrayAnnotation = {
     annotation: Maybe<string>,
 };
 
-export type Annotation = ObjectAnnotation | ArrayAnnotation | ScalarAnnotation;
+export type Annotation = ObjectAnnotation | ArrayAnnotation | ScalarAnnotation
+    | FunctionAnnotation;
 
 export function asAnnotation(thing: mixed): Annotation | void {
     if (typeof thing === 'object' && thing !== null) {
@@ -37,6 +44,8 @@ export function asAnnotation(thing: mixed): Annotation | void {
             return ((thing: cast): ArrayAnnotation);
         } else if (thing.type === 'ScalarAnnotation') {
             return ((thing: cast): ScalarAnnotation);
+        } else if (thing.type === 'FunctionAnnotation') {
+            return ((thing: cast): FunctionAnnotation);
         }
     }
     return undefined;

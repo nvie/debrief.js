@@ -68,6 +68,8 @@ export default function annotate(value: mixed, annotation: Maybe<string>): Annot
                 return { type: 'ObjectAnnotation', pairs: ann.pairs, annotation, hasAnnotation };
             } else if (ann.type === 'ArrayAnnotation') {
                 return { type: 'ArrayAnnotation', items: ann.items, annotation, hasAnnotation };
+            } else if (ann.type === 'FunctionAnnotation') {
+                return { type: 'FunctionAnnotation', annotation, hasAnnotation };
             } else {
                 return { type: 'ScalarAnnotation', value: ann.value, annotation, hasAnnotation };
             }
@@ -77,6 +79,8 @@ export default function annotate(value: mixed, annotation: Maybe<string>): Annot
             return { type: 'ArrayAnnotation', items, hasAnnotation, annotation };
         } else if (typeof value === 'object') {
             return annotatePairs(Object.entries(value), annotation);
+        } else if (typeof value === 'function') {
+            return { type: 'FunctionAnnotation', hasAnnotation, annotation };
         } else {
             throw new Error('Unknown annotation');
         }

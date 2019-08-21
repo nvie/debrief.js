@@ -25,6 +25,11 @@ describe('serialize', () => {
         );
     });
 
+    it('serializes functions', () => {
+        debrief(function() {}, 'function() {}');
+        debrief(() => {}, 'function() {}');
+    });
+
     it('serializes annotated primitives', () => {
         debrief(
             annotate(123, 'a number'),
@@ -73,6 +78,13 @@ describe('serialize', () => {
             `
               {}
               ^^ must not be empty
+            `
+        );
+        debrief(
+            annotate(() => {}, 'xxx'),
+            `
+              function() {}
+              ^^^^^^^^^^^^^ xxx
             `
         );
     });
