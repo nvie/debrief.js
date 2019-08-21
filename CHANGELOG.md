@@ -1,3 +1,8 @@
+v1.2.7
+------
+- Fix serialization of values that are or include functions.  Thanks,
+  @ebuckthal!
+
 v1.2.6
 ------
 - Fix minor implementation detail that caused Flow issues since 0.101.1
