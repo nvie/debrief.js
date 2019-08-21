@@ -33,8 +33,7 @@ export type ArrayAnnotation = {
     annotation: Maybe<string>,
 };
 
-export type Annotation = ObjectAnnotation | ArrayAnnotation | ScalarAnnotation
-    | FunctionAnnotation;
+export type Annotation = ObjectAnnotation | ArrayAnnotation | ScalarAnnotation | FunctionAnnotation;
 
 export function asAnnotation(thing: mixed): Annotation | void {
     if (typeof thing === 'object' && thing !== null) {
