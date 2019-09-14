@@ -1,5 +1,5 @@
 [![npm](https://img.shields.io/npm/v/debrief.svg)](https://www.npmjs.com/package/debrief)
-[![Build Status](https://img.shields.io/travis/nvie/debrief.js/master.svg)](https://travis-ci.org/nvie/debrief.js)
+[![Build Status](https://github.com/nvie/debrief.js/workflows/test/badge.svg)](https://github.com/nvie/debrief.js/actions)
 [![Coverage Status](https://img.shields.io/coveralls/nvie/debrief.js/master.svg)](https://coveralls.io/github/nvie/debrief.js?branch=master)
 [![Minified Size](https://badgen.net/bundlephobia/minzip/debrief)](https://bundlephobia.com/result?p=debrief)
 
