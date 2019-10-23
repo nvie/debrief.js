@@ -1,3 +1,10 @@
+v1.2.8
+------
+- Improved TypeScript setup
+  - Added TypeScript linter (`dtslint`)
+  - Reorganization of TypeScript declarations
+
+
 v1.2.7
 ------
 - Fix serialization of values that are or include functions.  Thanks,
