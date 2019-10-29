@@ -1,3 +1,9 @@
+v1.2.9
+------
+- Fix bug introduced in v1.2.8 for TypeScript users trying to import from
+  submodules, like 'debrief/ast'.
+
+
 v1.2.8
 ------
 - Improved TypeScript setup
