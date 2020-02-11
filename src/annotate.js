@@ -4,7 +4,7 @@ import { asAnnotation } from './ast';
 import type { Annotation, Maybe, ObjectAnnotation } from './ast';
 
 export function annotateFields(
-    object: { [string]: mixed },
+    object: { [string]: mixed, ... },
     fields: Array<[/* key */ string, string | Annotation]>
 ): ObjectAnnotation {
     // Convert the object to a list of pairs
@@ -34,7 +34,11 @@ export function annotateFields(
     return annotatePairs(pairs);
 }
 
-export function annotateField(object: { [string]: mixed }, field: string, ann: string | Annotation): ObjectAnnotation {
+export function annotateField(
+    object: { [string]: mixed, ... },
+    field: string,
+    ann: string | Annotation
+): ObjectAnnotation {
     return annotateFields(object, [[field, ann]]);
 }
 

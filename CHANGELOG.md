@@ -1,3 +1,8 @@
+v1.2.10
+-------
+- Fix bug when Flow setting `exact_by_default` is enabled
+
+
 v1.2.9
 ------
 - Fix bug introduced in v1.2.8 for TypeScript users trying to import from
