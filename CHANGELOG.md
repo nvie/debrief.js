@@ -1,5 +1,5 @@
-v1.2.10
--------
+v1.3.0
+------
 - Fix bug when Flow setting `exact_by_default` is enabled
 
 
