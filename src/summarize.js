@@ -38,7 +38,7 @@ export default function summarize(ann: Annotation, keypath: Keypath = []): Array
                 ? `Value at index ${keypath[0]}: `
                 : `Value at key ${JSON.stringify(keypath[0])}: `;
     } else {
-        prefix = `Value at keypath ${keypath.map(x => x.toString()).join('.')}: `;
+        prefix = `Value at keypath ${keypath.map((x) => x.toString()).join('.')}: `;
     }
     return [...result, `${prefix}${annotation}`];
 }

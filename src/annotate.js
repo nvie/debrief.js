@@ -46,7 +46,7 @@ export function annotatePairs(value: Array<[string, mixed]>, annotation: Maybe<s
     const pairs = value.map(([key, v]) => {
         return { key, value: annotate(v) };
     });
-    const hasAnnotation = pairs.some(pair => pair.value.hasAnnotation);
+    const hasAnnotation = pairs.some((pair) => pair.value.hasAnnotation);
     return { type: 'ObjectAnnotation', pairs, hasAnnotation, annotation };
 }
 
@@ -78,8 +78,8 @@ export default function annotate(value: mixed, annotation: Maybe<string>): Annot
                 return { type: 'ScalarAnnotation', value: ann.value, annotation, hasAnnotation };
             }
         } else if (Array.isArray(value)) {
-            const items = value.map(v => annotate(v));
-            hasAnnotation = items.some(ann => ann.hasAnnotation);
+            const items = value.map((v) => annotate(v));
+            hasAnnotation = items.some((ann) => ann.hasAnnotation);
             return { type: 'ArrayAnnotation', items, hasAnnotation, annotation };
         } else if (typeof value === 'object') {
             return annotatePairs(Object.entries(value), annotation);
