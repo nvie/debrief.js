@@ -26,7 +26,7 @@ describe('serialize', () => {
     });
 
     it('serializes functions', () => {
-        debrief(function() {}, 'function() {}');
+        debrief(function () {}, 'function() {}');
         debrief(() => {}, 'function() {}');
     });
 

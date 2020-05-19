@@ -10,8 +10,8 @@ export function dedent(value: string): string {
     if (lines.length > 0 && whitespace_re.test(lines[lines.length - 1])) {
         lines.pop();
     }
-    const level = Math.min(...lines.filter(s => !!s).map(s => s.search(/\S/)));
-    const dedented = lines.map(value => (value ? value.substring(level) : ''));
+    const level = Math.min(...lines.filter((s) => !!s).map((s) => s.search(/\S/)));
+    const dedented = lines.map((value) => (value ? value.substring(level) : ''));
     return dedented.join('\n');
 }
 
