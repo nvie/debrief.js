@@ -59,30 +59,30 @@ export default function annotate(value: mixed, annotation?: string): Annotation 
         typeof value.getMonth === 'function'
     ) {
         return { type: 'ScalarAnnotation', value, annotation };
-    } else {
-        const ann = asAnnotation(value);
-        // istanbul ignore else
-        if (ann) {
-            if (annotation === undefined) {
-                return ann;
-            } else if (ann.type === 'ObjectAnnotation') {
-                return { type: 'ObjectAnnotation', pairs: ann.pairs, annotation };
-            } else if (ann.type === 'ArrayAnnotation') {
-                return { type: 'ArrayAnnotation', items: ann.items, annotation };
-            } else if (ann.type === 'FunctionAnnotation') {
-                return { type: 'FunctionAnnotation', annotation };
-            } else {
-                return { type: 'ScalarAnnotation', value: ann.value, annotation };
-            }
-        } else if (Array.isArray(value)) {
-            const items = value.map((v) => annotate(v));
-            return { type: 'ArrayAnnotation', items, annotation };
-        } else if (typeof value === 'object') {
-            return annotatePairs(Object.entries(value), annotation);
-        } else if (typeof value === 'function') {
+    }
+
+    const ann = asAnnotation(value);
+    // istanbul ignore else
+    if (ann) {
+        if (annotation === undefined) {
+            return ann;
+        } else if (ann.type === 'ObjectAnnotation') {
+            return { type: 'ObjectAnnotation', pairs: ann.pairs, annotation };
+        } else if (ann.type === 'ArrayAnnotation') {
+            return { type: 'ArrayAnnotation', items: ann.items, annotation };
+        } else if (ann.type === 'FunctionAnnotation') {
             return { type: 'FunctionAnnotation', annotation };
         } else {
-            throw new Error('Unknown annotation');
+            return { type: 'ScalarAnnotation', value: ann.value, annotation };
         }
+    } else if (Array.isArray(value)) {
+        const items = value.map((v) => annotate(v));
+        return { type: 'ArrayAnnotation', items, annotation };
+    } else if (typeof value === 'object') {
+        return annotatePairs(Object.entries(value), annotation);
+    } else if (typeof value === 'function') {
+        return { type: 'FunctionAnnotation', annotation };
+    } else {
+        throw new Error('Unknown annotation');
     }
 }
