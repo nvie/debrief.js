@@ -1,3 +1,8 @@
+v1.4.0
+------
+- Remove internal `hasAnnotation` data structure field that was never used
+
+
 v1.3.0
 ------
 - Fix bug when Flow setting `exact_by_default` is enabled

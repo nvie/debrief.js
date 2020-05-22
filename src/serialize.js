@@ -17,8 +17,7 @@ function serializeString(s: string, width: number = 80) {
     return ser;
 }
 
-function serializeArray(value: Array<Annotation>, hasAnnotations: boolean, prefix: string) {
-    // TODO: Inspect 'hasAnnotations' and decide whether to inline or expand serialize
+function serializeArray(value: Array<Annotation>, prefix: string) {
     if (value.length === 0) {
         return '[]';
     }
@@ -34,7 +33,7 @@ function serializeArray(value: Array<Annotation>, hasAnnotations: boolean, prefi
     return ['[', ...result, prefix + ']'].join('\n');
 }
 
-function serializeObject(pairs: Array<AnnPair>, hasAnnotations: boolean, prefix: string) {
+function serializeObject(pairs: Array<AnnPair>, prefix: string) {
     if (pairs.length === 0) {
         return '{}';
     }
@@ -84,9 +83,9 @@ export function serializeValue(value: mixed): string {
 export function serializeAnnotation(ann: Annotation, prefix: string = ''): [string, Maybe<string>] {
     let serialized;
     if (ann.type === 'ArrayAnnotation') {
-        serialized = serializeArray(ann.items, ann.hasAnnotation, prefix);
+        serialized = serializeArray(ann.items, prefix);
     } else if (ann.type === 'ObjectAnnotation') {
-        serialized = serializeObject(ann.pairs, ann.hasAnnotation, prefix);
+        serialized = serializeObject(ann.pairs, prefix);
     } else if (ann.type === 'FunctionAnnotation') {
         serialized = 'function() {}';
     } else {

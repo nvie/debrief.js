@@ -46,13 +46,10 @@ export function annotatePairs(value: Array<[string, mixed]>, annotation: Maybe<s
     const pairs = value.map(([key, v]) => {
         return { key, value: annotate(v) };
     });
-    const hasAnnotation = pairs.some((pair) => pair.value.hasAnnotation);
-    return { type: 'ObjectAnnotation', pairs, hasAnnotation, annotation };
+    return { type: 'ObjectAnnotation', pairs, annotation };
 }
 
 export default function annotate(value: mixed, annotation: Maybe<string>): Annotation {
-    let hasAnnotation = annotation !== undefined;
-
     if (
         value === null ||
         value === undefined ||
@@ -61,7 +58,7 @@ export default function annotate(value: mixed, annotation: Maybe<string>): Annot
         typeof value === 'boolean' ||
         typeof value.getMonth === 'function'
     ) {
-        return { type: 'ScalarAnnotation', value, hasAnnotation, annotation };
+        return { type: 'ScalarAnnotation', value, annotation };
     } else {
         const ann = asAnnotation(value);
         // istanbul ignore else
@@ -69,22 +66,21 @@ export default function annotate(value: mixed, annotation: Maybe<string>): Annot
             if (annotation === undefined) {
                 return ann;
             } else if (ann.type === 'ObjectAnnotation') {
-                return { type: 'ObjectAnnotation', pairs: ann.pairs, annotation, hasAnnotation };
+                return { type: 'ObjectAnnotation', pairs: ann.pairs, annotation };
             } else if (ann.type === 'ArrayAnnotation') {
-                return { type: 'ArrayAnnotation', items: ann.items, annotation, hasAnnotation };
+                return { type: 'ArrayAnnotation', items: ann.items, annotation };
             } else if (ann.type === 'FunctionAnnotation') {
-                return { type: 'FunctionAnnotation', annotation, hasAnnotation };
+                return { type: 'FunctionAnnotation', annotation };
             } else {
-                return { type: 'ScalarAnnotation', value: ann.value, annotation, hasAnnotation };
+                return { type: 'ScalarAnnotation', value: ann.value, annotation };
             }
         } else if (Array.isArray(value)) {
             const items = value.map((v) => annotate(v));
-            hasAnnotation = items.some((ann) => ann.hasAnnotation);
-            return { type: 'ArrayAnnotation', items, hasAnnotation, annotation };
+            return { type: 'ArrayAnnotation', items, annotation };
         } else if (typeof value === 'object') {
             return annotatePairs(Object.entries(value), annotation);
         } else if (typeof value === 'function') {
-            return { type: 'FunctionAnnotation', hasAnnotation, annotation };
+            return { type: 'FunctionAnnotation', annotation };
         } else {
             throw new Error('Unknown annotation');
         }
