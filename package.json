@@ -1,6 +1,6 @@
 {
     "name": "debrief",
-    "version": "1.3.0",
+    "version": "1.4.0",
     "description": "Object serialization and annotation, for use in human-friendly error messages",
     "license": "MIT",
     "repository": {
