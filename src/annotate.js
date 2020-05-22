@@ -1,7 +1,7 @@
 // @flow strict
 
 import { asAnnotation } from './ast';
-import type { Annotation, Maybe, ObjectAnnotation } from './ast';
+import type { Annotation, ObjectAnnotation } from './ast';
 
 export function annotateFields(
     object: { [string]: mixed, ... },
@@ -42,14 +42,14 @@ export function annotateField(
     return annotateFields(object, [[field, ann]]);
 }
 
-export function annotatePairs(value: Array<[string, mixed]>, annotation: Maybe<string>): ObjectAnnotation {
+export function annotatePairs(value: Array<[string, mixed]>, annotation?: string): ObjectAnnotation {
     const pairs = value.map(([key, v]) => {
         return { key, value: annotate(v) };
     });
     return { type: 'ObjectAnnotation', pairs, annotation };
 }
 
-export default function annotate(value: mixed, annotation: Maybe<string>): Annotation {
+export default function annotate(value: mixed, annotation?: string): Annotation {
     if (
         value === null ||
         value === undefined ||

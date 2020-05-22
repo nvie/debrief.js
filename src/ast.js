@@ -1,18 +1,16 @@
 // @flow strict
 
-export type Maybe<T> = T | void;
-
 type cast = $FlowFixMe;
 
 export type ScalarAnnotation = {
     type: 'ScalarAnnotation',
     value: mixed,
-    annotation: Maybe<string>,
+    annotation?: string,
 };
 
 export type FunctionAnnotation = {
     type: 'FunctionAnnotation',
-    annotation: Maybe<string>,
+    annotation?: string,
 };
 
 export type AnnPair = { key: string, value: Annotation };
@@ -20,13 +18,13 @@ export type AnnPair = { key: string, value: Annotation };
 export type ObjectAnnotation = {
     type: 'ObjectAnnotation',
     pairs: Array<AnnPair>,
-    annotation: Maybe<string>,
+    annotation?: string,
 };
 
 export type ArrayAnnotation = {
     type: 'ArrayAnnotation',
     items: Array<Annotation>,
-    annotation: Maybe<string>,
+    annotation?: string,
 };
 
 export type Annotation = ObjectAnnotation | ArrayAnnotation | ScalarAnnotation | FunctionAnnotation;

@@ -1,6 +1,6 @@
 // @flow strict
 
-import type { AnnPair, Annotation, Maybe } from './ast';
+import type { AnnPair, Annotation } from './ast';
 import { INDENT, asDate, indent, isMultiline } from './utils';
 
 function serializeString(s: string, width: number = 80) {
@@ -80,7 +80,7 @@ export function serializeValue(value: mixed): string {
     }
 }
 
-export function serializeAnnotation(ann: Annotation, prefix: string = ''): [string, Maybe<string>] {
+export function serializeAnnotation(ann: Annotation, prefix: string = ''): [string, string | void] {
     let serialized;
     if (ann.type === 'ArrayAnnotation') {
         serialized = serializeArray(ann.items, prefix);

@@ -1,9 +1,7 @@
-export type Maybe<T> = T | undefined;
 export interface ScalarAnnotation {
     type: 'ScalarAnnotation';
     value: unknown;
-    hasAnnotation: boolean;
-    annotation: Maybe<string>;
+    annotation?: string;
 }
 export interface AnnPair {
     key: string;
@@ -12,14 +10,12 @@ export interface AnnPair {
 export interface ObjectAnnotation {
     type: 'ObjectAnnotation';
     pairs: AnnPair[];
-    hasAnnotation: boolean;
-    annotation: Maybe<string>;
+    annotation?: string;
 }
 export interface ArrayAnnotation {
     type: 'ArrayAnnotation';
     items: Annotation[];
-    hasAnnotation: boolean;
-    annotation: Maybe<string>;
+    annotation?: string;
 }
 export type Annotation = ObjectAnnotation | ArrayAnnotation | ScalarAnnotation;
 export function asAnnotation(thing: unknown): Annotation | undefined;
