@@ -1,4 +1,4 @@
-## v1.4.0-rc1
+## v1.4.0
 
 -   Fix bug where self-referential structures would cause infinite recursion when
     being annotated
