@@ -1,12 +1,25 @@
 // @flow strict
 
 import { asAnnotation } from './ast';
-import type { Annotation, ObjectAnnotation } from './ast';
+import type { Annotation, CircularRefAnnotation, ObjectAnnotation } from './ast';
+
+// NOTE: Deliberate use of `any` here, to match the Flow stdlib for WeakSet's
+// T condition from /private/tmp/flow/flowlib_381b77f4/core.js, which says:
+// declare class WeakSet<T: {...} | $ReadOnlyArray<any>> extends $ReadOnlyWeakSet<T> {
+// ($FlowFixMe)
+type RefSet = WeakSet<{ ... } | $ReadOnlyArray<any>>;
 
 export function annotateFields(
     object: { [string]: mixed, ... },
-    fields: Array<[/* key */ string, string | Annotation]>
-): ObjectAnnotation {
+    fields: Array<[/* key */ string, string | Annotation]>,
+    _seen?: RefSet
+): ObjectAnnotation | CircularRefAnnotation {
+    const seen = _seen ?? new WeakSet();
+    if (seen.has(object)) {
+        return { type: 'CircularRefAnnotation', annotation: undefined };
+    }
+    seen.add(object);
+
     // Convert the object to a list of pairs
     let pairs = Object.entries(object);
 
@@ -26,30 +39,31 @@ export function annotateFields(
             field === k
                 ? [
                     k,
-                    typeof ann === 'string' ? annotate(v, ann) : ann,
+                    typeof ann === 'string' ? annotate(v, ann, seen) : ann,
                 ]
                 : [k, v]
         ));
     }
-    return annotatePairs(pairs);
+    return annotatePairs(pairs, undefined, seen);
 }
 
 export function annotateField(
     object: { [string]: mixed, ... },
     field: string,
-    ann: string | Annotation
-): ObjectAnnotation {
-    return annotateFields(object, [[field, ann]]);
+    ann: string | Annotation,
+    seen?: RefSet
+): ObjectAnnotation | CircularRefAnnotation {
+    return annotateFields(object, [[field, ann]], seen);
 }
 
-export function annotatePairs(value: Array<[string, mixed]>, annotation?: string): ObjectAnnotation {
+export function annotatePairs(value: Array<[string, mixed]>, annotation?: string, seen?: RefSet): ObjectAnnotation {
     const pairs = value.map(([key, v]) => {
-        return { key, value: annotate(v) };
+        return { key, value: annotate(v, undefined, seen) };
     });
     return { type: 'ObjectAnnotation', pairs, annotation };
 }
 
-export default function annotate(value: mixed, annotation?: string): Annotation {
+export default function annotate(value: mixed, annotation?: string, _seen?: RefSet): Annotation {
     if (
         value === null ||
         value === undefined ||
@@ -72,14 +86,28 @@ export default function annotate(value: mixed, annotation?: string): Annotation 
             return { type: 'ArrayAnnotation', items: ann.items, annotation };
         } else if (ann.type === 'FunctionAnnotation') {
             return { type: 'FunctionAnnotation', annotation };
+        } else if (ann.type === 'CircularRefAnnotation') {
+            return { type: 'CircularRefAnnotation', annotation };
         } else {
             return { type: 'ScalarAnnotation', value: ann.value, annotation };
         }
     } else if (Array.isArray(value)) {
-        const items = value.map((v) => annotate(v));
+        const seen = _seen ?? new WeakSet();
+        if (seen.has(value)) {
+            return { type: 'CircularRefAnnotation', annotation };
+        } else {
+            seen.add(value);
+        }
+        const items = value.map((v) => annotate(v, undefined, seen));
         return { type: 'ArrayAnnotation', items, annotation };
     } else if (typeof value === 'object') {
-        return annotatePairs(Object.entries(value), annotation);
+        const seen = _seen ?? new WeakSet();
+        if (seen.has(value)) {
+            return { type: 'CircularRefAnnotation', annotation };
+        } else {
+            seen.add(value);
+        }
+        return annotatePairs(Object.entries(value), annotation, seen);
     } else if (typeof value === 'function') {
         return { type: 'FunctionAnnotation', annotation };
     } else {
