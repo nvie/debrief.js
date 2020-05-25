@@ -13,6 +13,11 @@ export type FunctionAnnotation = {
     annotation?: string,
 };
 
+export type CircularRefAnnotation = {
+    type: 'CircularRefAnnotation',
+    annotation?: string,
+};
+
 export type AnnPair = { key: string, value: Annotation };
 
 export type ObjectAnnotation = {
@@ -27,7 +32,12 @@ export type ArrayAnnotation = {
     annotation?: string,
 };
 
-export type Annotation = ObjectAnnotation | ArrayAnnotation | ScalarAnnotation | FunctionAnnotation;
+export type Annotation =
+    | ObjectAnnotation
+    | ArrayAnnotation
+    | ScalarAnnotation
+    | FunctionAnnotation
+    | CircularRefAnnotation;
 
 export function asAnnotation(thing: mixed): Annotation | void {
     if (typeof thing === 'object' && thing !== null) {
@@ -39,6 +49,8 @@ export function asAnnotation(thing: mixed): Annotation | void {
             return ((thing: cast): ScalarAnnotation);
         } else if (thing.type === 'FunctionAnnotation') {
             return ((thing: cast): FunctionAnnotation);
+        } else if (thing.type === 'CircularRefAnnotation') {
+            return ((thing: cast): CircularRefAnnotation);
         }
     }
     return undefined;
