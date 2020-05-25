@@ -275,57 +275,68 @@ describe('parsing is idempotent', () => {
 
 describe('annotating circular objects', () => {
     it('circular arrays', () => {
-        var circularArray = ['foo', circularArray];
+        var circularArray = ['foo'];
+        circularArray.push(circularArray);
         expect(annotate(circularArray)).toEqual({
             type: 'ArrayAnnotation',
-            hasAnnotation: false,
             annotation: undefined,
             items: [
                 {
                     type: 'ScalarAnnotation',
                     value: 'foo',
-                    hasAnnotation: false,
                     annotation: undefined,
                 },
-                {
-                    type: 'ScalarAnnotation',
-                    value: '[circular]',
-                    hasAnnotation: false,
-                    annotation: undefined,
-                },
+                { type: 'CircularRefAnnotation' },
             ],
         });
     });
 
-    // xit('circular objects', () => {
-    //     var circularObject = {
-    //         foo: 'foo',
-    //         bar: circularObject
-    //     };
-    //     expect(annotateField(obj2, 'name', annotate('example', 'An example value'))).toEqual({
-    //         type: 'ObjectAnnotation',
-    //         pairs: [
-    //             {
-    //                 key: 'name',
-    //                 value: {
-    //                     type: 'ScalarAnnotation',
-    //                     value: 'example',
-    //                     annotation: 'An example value',
-    //                     hasAnnotation: true,
-    //                 },
-    //             },
-    //             {
-    //                 key: 'age',
-    //                 value: {
-    //                     type: 'ScalarAnnotation',
-    //                     value: 20,
-    //                     annotation: undefined,
-    //                     hasAnnotation: false,
-    //                 },
-    //             },
-    //         ],
-    //         annotation: undefined,
-    //         hasAnnotation: true,
-    //     });
-    // })
+    it('circular objects', () => {
+        var circularObject = { foo: 42, bar: { qux: 'hello' } };
+        // $FlowFixMe
+        circularObject.bar.self = circularObject;
+        // $FlowFixMe
+        circularObject.self = circularObject;
+        expect(annotateField(circularObject, 'self', 'Example')).toEqual({
+            type: 'ObjectAnnotation',
+            pairs: [
+                {
+                    key: 'foo',
+                    value: {
+                        type: 'ScalarAnnotation',
+                        value: 42,
+                    },
+                },
+                {
+                    key: 'bar',
+                    value: {
+                        type: 'ObjectAnnotation',
+                        pairs: [
+                            {
+                                key: 'qux',
+                                value: {
+                                    type: 'ScalarAnnotation',
+                                    value: 'hello',
+                                },
+                            },
+                            {
+                                key: 'self',
+                                value: {
+                                    type: 'CircularRefAnnotation',
+                                },
+                            },
+                        ],
+                    },
+                },
+                {
+                    key: 'self',
+                    value: {
+                        type: 'CircularRefAnnotation',
+                        annotation: 'Example',
+                    },
+                },
+            ],
+            annotation: undefined,
+        });
+    });
 });
