@@ -1,6 +1,6 @@
 // @flow strict
 
-import annotate, { annotateField } from '../annotate';
+import annotate, { annotateFields } from '../annotate';
 import { isAnnotation } from '../ast';
 
 describe('annotation detection', () => {
@@ -197,7 +197,7 @@ describe('parsing (composite)', () => {
     it('annotates fields in object', () => {
         // Annotate with a simple string
         const obj = { name: null };
-        expect(annotateField(obj, 'name', 'Missing!')).toEqual({
+        expect(annotateFields(obj, [['name', 'Missing!']])).toEqual({
             type: 'ObjectAnnotation',
             pairs: [
                 {
@@ -210,7 +210,7 @@ describe('parsing (composite)', () => {
 
         // Annotate with a full annotation object (able to change the annotate value itself)
         const obj2 = { name: null, age: 20 };
-        expect(annotateField(obj2, 'name', annotate('example', 'An example value'))).toEqual({
+        expect(annotateFields(obj2, [['name', annotate('example', 'An example value')]])).toEqual({
             type: 'ObjectAnnotation',
             pairs: [
                 {
@@ -237,7 +237,7 @@ describe('parsing (composite)', () => {
     it('annotates missing fields in object', () => {
         // Annotate with a simple string
         const obj = { foo: 'hello' };
-        expect(annotateField(obj, 'bar', 'Missing')).toEqual({
+        expect(annotateFields(obj, [['bar', 'Missing']])).toEqual({
             type: 'ObjectAnnotation',
             pairs: [
                 {
@@ -297,7 +297,7 @@ describe('annotating circular objects', () => {
         circularObject.bar.self = circularObject;
         // $FlowFixMe
         circularObject.self = circularObject;
-        expect(annotateField(circularObject, 'self', 'Example')).toEqual({
+        expect(annotateFields(circularObject, [['self', 'Example']])).toEqual({
             type: 'ObjectAnnotation',
             pairs: [
                 {

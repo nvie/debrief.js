@@ -47,16 +47,7 @@ export function annotateFields(
     return annotatePairs(pairs, undefined, seen);
 }
 
-export function annotateField(
-    object: { [string]: mixed, ... },
-    field: string,
-    ann: string | Annotation,
-    seen?: RefSet
-): ObjectAnnotation | CircularRefAnnotation {
-    return annotateFields(object, [[field, ann]], seen);
-}
-
-export function annotatePairs(value: Array<[string, mixed]>, annotation?: string, seen?: RefSet): ObjectAnnotation {
+function annotatePairs(value: Array<[string, mixed]>, annotation?: string, seen?: RefSet): ObjectAnnotation {
     const pairs = value.map(([key, v]) => {
         return { key, value: annotate(v, undefined, seen) };
     });
