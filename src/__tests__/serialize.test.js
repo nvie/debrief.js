@@ -89,6 +89,21 @@ describe('serialize', () => {
         );
     });
 
+    it('serializes w/ cyclical refs', () => {
+        const value = {}; // just a dummy ref
+
+        // Construct a fake circular ref by modifying the seen set directly
+        const seen = new WeakSet();
+        seen.add(value);
+        debrief(
+            annotate(value, 'xxx', seen),
+            `
+              <circular ref>
+              ^^^^^^^^^^^^^^ xxx
+            `
+        );
+    });
+
     it('cannot serialize custom objects out of the box', () => {
         debrief(
             annotate(Number.NEGATIVE_INFINITY, 'Not finite'),
