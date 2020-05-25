@@ -1,6 +1,6 @@
 {
     "name": "debrief",
-    "version": "1.4.0",
+    "version": "1.4.0-rc1",
     "description": "Object serialization and annotation, for use in human-friendly error messages",
     "license": "MIT",
     "repository": {
@@ -58,6 +58,7 @@
         "prettier-plugin-package": "^1.0.0",
         "rimraf": "^3.0.0"
     },
+    "types": "./dist/types/index.d.ts",
     "githubUrl": "https://github.com/nvie/debrief.js",
     "jest": {
         "testPathIgnorePatterns": [
@@ -66,6 +67,5 @@
             ".skip.js"
         ]
     },
-    "sideEffects": false,
-    "types": "./dist/types/index.d.ts"
+    "sideEffects": false
 }
