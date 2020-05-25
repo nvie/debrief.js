@@ -1,6 +1,14 @@
-v1.4.0
-------
-- Remove internal `hasAnnotation` data structure field that was never used
+v1.4.0-rc1
+----------
+
+- Fix bug where self-referential structures would cause infinite recursion when
+  being annotated
+
+- **Breaking changes**
+  - Removed from public API:
+    - `annotateField()`
+    - `annotatePairs()`
+  - Remove internal `hasAnnotation` field from Annotation types
 
 
 v1.3.0
