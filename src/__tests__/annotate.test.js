@@ -15,6 +15,8 @@ describe('annotation detection', () => {
         expect(isAnnotation({ type: 'ObjectAnnotation' })).toBe(true);
         expect(isAnnotation({ type: 'ArrayAnnotation' })).toBe(true);
         expect(isAnnotation({ type: 'ScalarAnnotation' })).toBe(true);
+        expect(isAnnotation({ type: 'FunctionAnnotation' })).toBe(true);
+        expect(isAnnotation({ type: 'CircularRefAnnotation' })).toBe(true);
     });
 });
 
@@ -289,6 +291,18 @@ describe('annotating circular objects', () => {
                 { type: 'CircularRefAnnotation' },
             ],
         });
+        expect(annotate(annotate(annotate(circularArray)))).toEqual({
+            type: 'ArrayAnnotation',
+            annotation: undefined,
+            items: [
+                {
+                    type: 'ScalarAnnotation',
+                    value: 'foo',
+                    annotation: undefined,
+                },
+                { type: 'CircularRefAnnotation' },
+            ],
+        });
     });
 
     it('circular objects', () => {
@@ -337,6 +351,34 @@ describe('annotating circular objects', () => {
                 },
             ],
             annotation: undefined,
+        });
+    });
+
+    it('circular objects (w/ explicit seen)', () => {
+        var circularObject = { foo: 42, bar: { qux: 'hello' } };
+        // $FlowFixMe
+        circularObject.bar.self = circularObject;
+        // $FlowFixMe
+        circularObject.self = circularObject;
+
+        const seen = new WeakSet();
+        seen.add(circularObject);
+        expect(annotateFields(circularObject, [['self', 'Example']], seen)).toEqual({
+            type: 'CircularRefAnnotation',
+            annotation: undefined,
+        });
+    });
+
+    it('circular objects (w/ explicit annotation)', () => {
+        var circularObject = { foo: 42 };
+        // $FlowFixMe
+        circularObject.self = circularObject;
+
+        const seen = new WeakSet();
+        seen.add(circularObject);
+        expect(annotate(annotate(circularObject, undefined, seen), 'Example', seen)).toEqual({
+            type: 'CircularRefAnnotation',
+            annotation: 'Example',
         });
     });
 });
