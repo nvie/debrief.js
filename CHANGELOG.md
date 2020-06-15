@@ -1,3 +1,9 @@
+## v1.4.1
+
+-   Fix compatibility with standardized `$FlowFixMe` syntax format (since Flow
+    0.127.0)
+
+
 ## v1.4.0
 
 -   Fix bug where self-referential structures would cause infinite recursion when
