@@ -1,8 +1,11 @@
+## v1.4.2
+
+-   Republication of 1.4.1 as 1.4.2
+
 ## v1.4.1
 
 -   Fix compatibility with standardized `$FlowFixMe` syntax format (since Flow
     0.127.0)
-
 
 ## v1.4.0
 
