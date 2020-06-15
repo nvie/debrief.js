@@ -6,7 +6,7 @@ import type { Annotation, CircularRefAnnotation, ObjectAnnotation } from './ast'
 // NOTE: Deliberate use of `any` here, to match the Flow stdlib for WeakSet's
 // T condition from /private/tmp/flow/flowlib_381b77f4/core.js, which says:
 // declare class WeakSet<T: {...} | $ReadOnlyArray<any>> extends $ReadOnlyWeakSet<T> {
-// ($FlowFixMe)
+// $FlowFixMe
 type RefSet = WeakSet<{ ... } | $ReadOnlyArray<any>>;
 
 export function annotateFields(
