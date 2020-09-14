@@ -1,3 +1,8 @@
+## v1.4.3
+
+-   Include an error code with every FlowFixMe suppression (Flow 0.132.x
+    compatibility)
+
 ## v1.4.2
 
 -   Republication of 1.4.1 as 1.4.2
