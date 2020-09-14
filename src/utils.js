@@ -1,6 +1,6 @@
 // @flow strict
 
-// $FlowFixMe - deliberate casting
+// $FlowFixMe[unclear-type] - deliberate casting
 type cast = any;
 
 // Two spaces of indentation

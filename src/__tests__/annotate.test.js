@@ -307,9 +307,9 @@ describe('annotating circular objects', () => {
 
     it('circular objects', () => {
         var circularObject = { foo: 42, bar: { qux: 'hello' } };
-        // $FlowFixMe
+        // $FlowFixMe[prop-missing]
         circularObject.bar.self = circularObject;
-        // $FlowFixMe
+        // $FlowFixMe[prop-missing]
         circularObject.self = circularObject;
         expect(annotateFields(circularObject, [['self', 'Example']])).toEqual({
             type: 'ObjectAnnotation',
@@ -356,9 +356,9 @@ describe('annotating circular objects', () => {
 
     it('circular objects (w/ explicit seen)', () => {
         var circularObject = { foo: 42, bar: { qux: 'hello' } };
-        // $FlowFixMe
+        // $FlowFixMe[prop-missing]
         circularObject.bar.self = circularObject;
-        // $FlowFixMe
+        // $FlowFixMe[prop-missing]
         circularObject.self = circularObject;
 
         const seen = new WeakSet();
@@ -371,7 +371,7 @@ describe('annotating circular objects', () => {
 
     it('circular objects (w/ explicit annotation)', () => {
         var circularObject = { foo: 42 };
-        // $FlowFixMe
+        // $FlowFixMe[prop-missing]
         circularObject.self = circularObject;
 
         const seen = new WeakSet();
