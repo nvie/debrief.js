@@ -1,3 +1,7 @@
+## v1.5.0
+
+- Drop support for Node 13.x (unstable)
+
 ## v1.4.3
 
 -   Include an error code with every FlowFixMe suppression (Flow 0.132.x
