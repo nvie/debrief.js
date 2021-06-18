@@ -1,10 +1,7 @@
-## v1.5.1
-
--   Add support for Flow 0.153.x
-
 ## v1.5.0
 
 -   Drop support for Node 13.x (unstable)
+-   Add support for Flow 0.153.x
 
 ## v1.4.3
 
