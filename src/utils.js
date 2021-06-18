@@ -14,7 +14,10 @@ export const INDENT = '  ';
  * Taken from https://stackoverflow.com/a/44198641
  */
 const isDate = (value: mixed): boolean =>
-    !!value && Object.prototype.toString.call(value) === '[object Date]' && !isNaN(value);
+    !!value &&
+    // $FlowFixMe[method-unbinding]
+    Object.prototype.toString.call(value) === '[object Date]' &&
+    !isNaN(value);
 
 /**
  * Is value is a valid Date instance, then return that.  If not, then return
