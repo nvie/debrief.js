@@ -1,3 +1,7 @@
+## v1.6.0-beta1
+
+-   Include ES modules in published NPM builds
+
 ## v1.5.0
 
 -   Drop support for Node 13.x (unstable)
